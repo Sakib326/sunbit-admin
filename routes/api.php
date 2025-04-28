@@ -11,6 +11,7 @@ use Illuminate\Auth\Events\Verified;
 // Add these imports
 use Illuminate\Support\Facades\Route as FacadesRoute;
 use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Api\LocationController;
 
 /**
  * @group Public Endpoints
@@ -211,4 +212,50 @@ Route::middleware(['auth:sanctum', 'role:agent'])->group(function () {
      * }
      */
     Route::post('/agent-action', [AgentController::class, 'agentAction']);
+});
+
+
+
+// Add these routes to the existing locations route group
+
+/**
+ * @group Locations
+ *
+ * APIs for managing location data
+ */
+Route::prefix('locations')->group(function () {
+    // Countries (already implemented)
+    Route::get('/countries', [LocationController::class, 'countries']);
+    Route::get('/countries/{id}', [LocationController::class, 'country']);
+    Route::post('/countries', [LocationController::class, 'storeCountry'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::put('/countries/{id}', [LocationController::class, 'updateCountry'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::delete('/countries/{id}', [LocationController::class, 'deleteCountry'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::post('/countries/{id}/restore', [LocationController::class, 'restoreCountry'])->middleware(['auth:sanctum', 'role:admin']);
+
+    // States
+    Route::get('/countries/{country_id}/states', [LocationController::class, 'statesByCountry']);
+    Route::get('/states/{id}', [LocationController::class, 'state']);
+    Route::post('/states', [LocationController::class, 'storeState'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::put('/states/{id}', [LocationController::class, 'updateState'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::delete('/states/{id}', [LocationController::class, 'deleteState'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::post('/states/{id}/restore', [LocationController::class, 'restoreState'])->middleware(['auth:sanctum', 'role:admin']);
+
+    // Zellas
+    Route::get('/states/{state_id}/zellas', [LocationController::class, 'zellasByState']);
+    Route::get('/zellas/{id}', [LocationController::class, 'zella']);
+    Route::post('/zellas', [LocationController::class, 'storeZella'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::put('/zellas/{id}', [LocationController::class, 'updateZella'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::delete('/zellas/{id}', [LocationController::class, 'deleteZella'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::post('/zellas/{id}/restore', [LocationController::class, 'restoreZella'])->middleware(['auth:sanctum', 'role:admin']);
+
+    // Upazillas
+    Route::get('/zellas/{zella_id}/upazillas', [LocationController::class, 'upazillasByZella']);
+    Route::get('/upazillas/{id}', [LocationController::class, 'upazilla']);
+    Route::post('/upazillas', [LocationController::class, 'storeUpazilla'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::put('/upazillas/{id}', [LocationController::class, 'updateUpazilla'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::delete('/upazillas/{id}', [LocationController::class, 'deleteUpazilla'])->middleware(['auth:sanctum', 'role:admin']);
+    Route::post('/upazillas/{id}/restore', [LocationController::class, 'restoreUpazilla'])->middleware(['auth:sanctum', 'role:admin']);
+
+    // Hierarchical data
+    Route::get('/hierarchy', [LocationController::class, 'hierarchy']);
 });
