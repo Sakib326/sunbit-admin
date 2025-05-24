@@ -15,7 +15,7 @@ class State extends Model
     use SoftDeletes;
     use HasSlug;
 
-    protected $fillable = ['country_id', 'name', 'slug', 'code', 'status'];
+    protected $fillable = ['country_id', 'name', 'slug', 'code','image', 'status'];
 
     public function country(): BelongsTo
     {

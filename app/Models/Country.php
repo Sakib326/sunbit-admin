@@ -14,7 +14,7 @@ class Country extends Model
     use SoftDeletes;
     use HasSlug;
 
-    protected $fillable = ['name', 'slug', 'code', 'currency', 'currency_symbol', 'status'];
+    protected $fillable = ['name', 'slug', 'code', 'currency', 'currency_symbol','flag', 'status'];
 
     public function states(): HasMany
     {
