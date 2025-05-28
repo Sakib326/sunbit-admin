@@ -203,7 +203,14 @@ class TourPackageResource extends Resource
                                     ->prefix('$')
                                     ->default(0.00),
 
-                                    Forms\Components\TextInput::make('agent_commission_percent')
+                                Forms\Components\TextInput::make('max_booking_per_day')
+                                    ->label('Max Booking Per Day')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->nullable()
+                                    ->helperText('Default maximum bookings allowed per day. Special dates can override this.'),
+
+                                Forms\Components\TextInput::make('agent_commission_percent')
                                     ->label('Agent Commission')
                                     ->numeric()
                                     ->suffix('%')
@@ -547,6 +554,7 @@ class TourPackageResource extends Resource
             RelationManagers\ItinerariesRelationManager::class,
             RelationManagers\GalleriesRelationManager::class,
             RelationManagers\FaqsRelationManager::class,
+            RelationManagers\BookingLimitsRelationManager::class,
         ];
     }
 

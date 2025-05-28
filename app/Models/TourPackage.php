@@ -35,6 +35,7 @@ class TourPackage extends Model
         'number_of_nights',
         'base_price_adult',
         'base_price_child',
+        'max_booking_per_day',
         'agent_commission_percent',
         'status',
     ];
@@ -67,5 +68,19 @@ class TourPackage extends Model
     public function faqs()
     {
         return $this->hasMany(TourPackageFaq::class, 'tour_package_id');
+    }
+
+    public function bookingLimits()
+    {
+        return $this->hasMany(TourPackageBookingLimit::class, 'tour_package_id');
+    }
+
+    /**
+     * Get the max booking for a specific date.
+     */
+    public function getMaxBookingForDate($date)
+    {
+        $special = $this->bookingLimits()->where('date', $date)->first();
+        return $special?->max_booking ?? $this->max_booking_per_day;
     }
 }
