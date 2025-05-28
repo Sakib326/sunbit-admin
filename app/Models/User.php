@@ -37,4 +37,18 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     {
         return $this->role === 'admin';
     }
+
+    public function agentCommissions()
+    {
+        return $this->hasMany(AgentCommission::class, 'agent_id');
+    }
+    public function createdCommissions()
+    {
+        return $this->hasMany(AgentCommission::class, 'created_by');
+    }
+    public function updatedCommissions()
+    {
+        return $this->hasMany(AgentCommission::class, 'updated_by');
+    }
+
 }

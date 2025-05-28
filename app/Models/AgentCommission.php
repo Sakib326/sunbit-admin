@@ -29,41 +29,52 @@ class AgentCommission extends Model
         'VISA',
     ];
 
-    /**
-     * Get the agent (user) this commission applies to.
-     */
+    protected $casts = [
+        'service' => 'string',
+        'commission_percent' => 'decimal:2',
+        'commission_amount' => 'decimal:2',
+    ];
+
     public function agent()
     {
         return $this->belongsTo(User::class, 'agent_id');
     }
 
-    /**
-     * Get the user who created this commission.
-     */
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Get the user who last updated this commission.
-     */
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-    /**
-     * Scope for a specific service.
-     */
+    // Display service as readable label
+    public function getServiceLabelAttribute()
+    {
+        return ucfirst(strtolower($this->service));
+    }
+
+    // Calculate commission for a given amount
+    public function calculateCommission($amount)
+    {
+        if ($this->commission_percent !== null) {
+            return round($amount * ($this->commission_percent / 100), 2);
+        }
+        if ($this->commission_amount !== null) {
+            return $this->commission_amount;
+        }
+        return 0;
+    }
+
+    // Scope for a specific service
     public function scopeForService($query, $service)
     {
         return $query->where('service', $service);
     }
 
-    /**
-     * Scope for a specific agent.
-     */
+    // Scope for a specific agent
     public function scopeForAgent($query, $agentId)
     {
         return $query->where('agent_id', $agentId);
