@@ -36,9 +36,14 @@ class CarRentalPackage extends Model
         return $this->hasMany(CarRentalBookingLimit::class);
     }
 
-    public function bookings()
+    public function bookingsDetail()
     {
         return $this->hasMany(CarRentalBookingDetail::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'car_rental_package_id');
     }
 
     // === LOCATION METHODS ===
@@ -90,7 +95,7 @@ class CarRentalPackage extends Model
         $maxBookings = $bookingLimit ? $bookingLimit->max_booking_override : $this->total_cars;
 
         // Count existing bookings for this date
-        $bookedCars = $this->bookings()
+        $bookedCars = $this->bookingsDetail()
             ->whereHas('booking', function ($query) use ($date) {
                 $query->where('service_date', $date)
                       ->where('status', '!=', 'cancelled');
@@ -182,4 +187,6 @@ class CarRentalPackage extends Model
     {
         return $query->where('pax_capacity', $capacity);
     }
+
+
 }

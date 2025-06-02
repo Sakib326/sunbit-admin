@@ -207,4 +207,9 @@ class TourPackage extends Model
         $special = $this->bookingLimits()->where('date', $date)->first();
         return $special?->max_booking ?? $this->max_booking_per_day;
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'tour_package_id');
+    }
 }
