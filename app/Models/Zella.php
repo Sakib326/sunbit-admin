@@ -26,4 +26,14 @@ class Zella extends Model
     {
         return $this->hasMany(Upazilla::class);
     }
+
+    public function carRentalPackageLocations()
+    {
+        return $this->hasMany(CarRentalPackageLocation::class);
+    }
+
+    public function carRentalBookingDetails()
+    {
+        return $this->hasMany(CarRentalBookingDetail::class, 'pickup_upazilla_id');
+    }
 }

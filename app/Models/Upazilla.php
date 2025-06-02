@@ -20,4 +20,22 @@ class Upazilla extends Model
     {
         return $this->belongsTo(Zella::class);
     }
+
+    public function carRentalPackageLocations()
+    {
+        return $this->hasMany(CarRentalPackageLocation::class);
+    }
+
+    public function carRentalBookingDetails()
+    {
+        return $this->hasMany(CarRentalBookingDetail::class, 'pickup_upazilla_id');
+    }
+
+    // Get available car rental packages in this upazilla
+    public function availableCarRentalPackages()
+    {
+        return CarRentalPackage::whereHas('locations', function ($query) {
+            $query->where('upazilla_id', $this->id);
+        })->where('status', 'active');
+    }
 }

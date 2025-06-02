@@ -60,4 +60,24 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     {
         return $this->hasMany(Booking::class, 'booked_by');
     }
+
+    public function carRentalBookings()
+    {
+        return $this->hasMany(Booking::class, 'customer_id')->where('service_type', 'CAR_RENTAL');
+    }
+
+    public function carRentalBookingsAsAgent()
+    {
+        return $this->hasMany(Booking::class, 'agent_id')->where('service_type', 'CAR_RENTAL');
+    }
+
+    public function tourBookings()
+    {
+        return $this->hasMany(Booking::class, 'customer_id')->where('service_type', 'TOURS');
+    }
+
+    public function tourBookingsAsAgent()
+    {
+        return $this->hasMany(Booking::class, 'agent_id')->where('service_type', 'TOURS');
+    }
 }

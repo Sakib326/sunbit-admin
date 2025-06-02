@@ -1,7 +1,5 @@
 <?php
 
-// filepath: app/Filament/Resources/BookingResource/RelationManagers/PaymentsRelationManager.php
-
 namespace App\Filament\Resources\BookingResource\RelationManagers;
 
 use Filament\Forms;
@@ -27,13 +25,12 @@ class PaymentsRelationManager extends RelationManager
 
                 Forms\Components\Select::make('payment_type')
                     ->options([
-                        'initial' => 'Initial Payment',
-                        'partial' => 'Partial Payment',
-                        'final' => 'Final Payment',
+                        'advance_payment' => 'Advance Payment',
+                        'partial_payment' => 'Partial Payment',
+                        'full_payment' => 'Final Payment',
                         'refund' => 'Refund',
-                        'security_deposit' => 'Security Deposit'
                     ])
-                    ->default('partial')
+                    ->default('partial_payment')
                     ->required(),
 
                 Forms\Components\TextInput::make('amount')

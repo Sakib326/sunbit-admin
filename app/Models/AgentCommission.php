@@ -27,6 +27,7 @@ class AgentCommission extends Model
         'CRUISE',
         'TRANSPORT',
         'VISA',
+        'CAR_RENTAL',
     ];
 
     protected $casts = [
