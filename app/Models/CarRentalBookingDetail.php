@@ -1,5 +1,7 @@
 <?php
 
+// filepath: app/Models/CarRentalBookingDetail.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -12,9 +14,7 @@ class CarRentalBookingDetail extends Model
     use HasUuids;
 
     protected $fillable = [
-        'booking_id', 'car_rental_package_id', 'pickup_date', 'return_date',
-        'rental_days', 'pickup_upazilla_id', 'pickup_address',
-        'driver_name', 'driver_phone'
+        'booking_id', 'car_rental_package_id', 'pickup_date', 'return_date', 'rental_days'
     ];
 
     protected $casts = [
@@ -33,43 +33,14 @@ class CarRentalBookingDetail extends Model
         return $this->belongsTo(CarRentalPackage::class);
     }
 
-    public function pickupUpazilla()
-    {
-        return $this->belongsTo(Upazilla::class, 'pickup_upazilla_id');
-    }
-
     // === METHODS ===
-    public function getFullPickupLocation()
-    {
-        if (!$this->pickupUpazilla) {
-            return 'Location not specified';
-        }
-
-        $location = [];
-
-        $location[] = $this->pickupUpazilla->name;
-
-        if ($this->pickupUpazilla->zella) {
-            $location[] = $this->pickupUpazilla->zella->name;
-        }
-
-        if ($this->pickupUpazilla->zella?->state) {
-            $location[] = $this->pickupUpazilla->zella->state->name;
-        }
-
-        return implode(', ', $location);
-    }
-
     public function getRentalSummary()
     {
         return [
-            'car' => $this->carRentalPackage->getFullCarName(),
-            'pickup_location' => $this->getFullPickupLocation(),
+            'car' => $this->carRentalPackage ? $this->carRentalPackage->getFullCarName() : 'Car package not found',
             'pickup_date' => $this->pickup_date->format('d M Y'),
             'return_date' => $this->return_date->format('d M Y'),
             'rental_days' => $this->rental_days,
-            'driver' => $this->driver_name,
-            'phone' => $this->driver_phone,
         ];
     }
 

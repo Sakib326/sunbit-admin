@@ -127,22 +127,20 @@ class Booking extends Model
                 session()->forget('temp_tour_details');
             }
 
+
             // Auto-create car rental details if service_type is CAR_RENTAL
             if ($booking->service_type === 'CAR_RENTAL' && $booking->car_rental_package_id) {
                 $carDetails = session('temp_car_details', []);
 
                 $booking->carRentalDetails()->create([
-                    'car_rental_package_id' => $booking->car_rental_package_id,
+                    'car_rental_package_id' => $booking->car_rental_package_id, // ADD THIS LINE
                     'pickup_date' => $carDetails['pickup_date'] ?? $booking->service_date,
                     'return_date' => $carDetails['return_date'] ?? $booking->service_end_date,
-                    'pickup_upazilla_id' => $carDetails['pickup_upazilla_id'] ?? null,
-                    'pickup_address' => $carDetails['pickup_address'] ?? null,
-                    'driver_name' => $carDetails['driver_name'] ?? $booking->customer_name,
-                    'driver_phone' => $carDetails['driver_phone'] ?? $booking->customer_phone,
                 ]);
 
                 session()->forget('temp_car_details');
             }
+
         });
 
         static::updating(function ($booking) {

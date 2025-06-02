@@ -1,5 +1,7 @@
 <?php
 
+// filepath: app/Filament/Resources/BookingResource.php
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BookingResource\Pages;
@@ -7,8 +9,12 @@ use App\Filament\Resources\BookingResource\RelationManagers;
 use App\Models\Booking;
 use App\Models\User;
 use App\Models\TourPackage;
+use App\Models\CarRentalPackage;
 use App\Models\AgentCommission;
 use App\Models\TourPackageBookingLimit;
+use App\Models\CarRentalBookingLimit;
+use App\Models\Upazilla;
+use App\Filament\Resources\PaymentResource;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -53,12 +59,11 @@ class BookingResource extends Resource
                                 ->live()
                                 ->afterStateUpdated(function ($state, Forms\Set $set) {
                                     // Reset form when service type changes
-                                    if ($state !== 'TOURS') {
-                                        $set('tour_package_id', null);
-                                        $set('original_price', null);
-                                        $set('selling_price', null);
-                                        $set('final_amount', null);
-                                    }
+                                    $set('tour_package_id', null);
+                                    $set('car_rental_package_id', null);
+                                    $set('original_price', null);
+                                    $set('selling_price', null);
+                                    $set('final_amount', null);
                                 }),
 
                             Forms\Components\Select::make('booking_source')
@@ -78,7 +83,7 @@ class BookingResource extends Resource
                         ])
                         ->columns(1),
 
-                    // Step 2: Tour Package Selection (Only for TOURS)
+                    // Step 2a: Tour Package Selection (Only for TOURS)
                     Forms\Components\Wizard\Step::make('Tour Package')
                         ->schema([
                             Forms\Components\Select::make('tour_package_id')
@@ -174,6 +179,68 @@ class BookingResource extends Resource
                         ])
                         ->visible(fn (Forms\Get $get) => $get('service_type') === 'TOURS'),
 
+                    // Step 2b: Car Rental Package Selection (Only for CAR_RENTAL)
+                    Forms\Components\Wizard\Step::make('Car Rental Package')
+                        ->schema([
+                            Forms\Components\Select::make('car_rental_package_id')
+                                ->label('Car Rental Package')
+                                ->relationship('carRentalPackage', 'title', fn (Builder $query) => $query->where('status', 'active'))
+                                ->searchable()
+                                ->preload()
+                                ->required()
+                                ->live()
+                                ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                                    if ($state) {
+                                        $package = CarRentalPackage::find($state);
+                                        if ($package) {
+                                            // Auto-set pricing
+                                            $set('original_price', $package->daily_price);
+
+                                            // Calculate pricing and check availability
+                                            static::calculateCarRentalCommissionAndPricing($get, $set);
+                                            static::calculateCarRentalTotalPricing($get, $set);
+                                            static::checkCarRentalAvailability($get, $set);
+                                        }
+                                    }
+                                }),
+
+                            Forms\Components\Grid::make(2)
+                                ->schema([
+                                    Forms\Components\DatePicker::make('service_date')
+                                        ->label('Pickup Date')
+                                        ->required()
+                                        ->minDate(today())
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                                            if ($state && $get('service_end_date')) {
+                                                static::calculateCarRentalTotalPricing($get, $set);
+                                                static::checkCarRentalAvailability($get, $set);
+                                            }
+                                        }),
+
+                                    Forms\Components\DatePicker::make('service_end_date')
+                                        ->label('Return Date')
+                                        ->required()
+                                        ->minDate(fn (Forms\Get $get) => $get('service_date') ?: today())
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                                            if ($state && $get('service_date')) {
+                                                static::calculateCarRentalTotalPricing($get, $set);
+                                                static::checkCarRentalAvailability($get, $set);
+                                            }
+                                        }),
+                                ]),
+
+                            // Car Rental Availability Check
+                            Forms\Components\Placeholder::make('car_availability_status')
+                                ->label('Car Availability Status')
+                                ->content(function (Forms\Get $get) {
+                                    return static::getCarRentalAvailabilityStatus($get);
+                                })
+                                ->visible(fn (Forms\Get $get) => $get('car_rental_package_id') && $get('service_date') && $get('service_end_date')),
+                        ])
+                        ->visible(fn (Forms\Get $get) => $get('service_type') === 'CAR_RENTAL'),
+
                     // Step 3: Customer Information
                     Forms\Components\Wizard\Step::make('Customer')
                         ->schema([
@@ -252,9 +319,13 @@ class BookingResource extends Resource
                                 ->preload()
                                 ->live()
                                 ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
-                                    if ($get('service_type') === 'TOURS' && $get('tour_package_id')) {
+                                    $serviceType = $get('service_type');
+                                    if ($serviceType === 'TOURS' && $get('tour_package_id')) {
                                         static::calculateCommissionAndPricing($get, $set);
                                         static::calculateTotalPricing($get, $set);
+                                    } elseif ($serviceType === 'CAR_RENTAL' && $get('car_rental_package_id')) {
+                                        static::calculateCarRentalCommissionAndPricing($get, $set);
+                                        static::calculateCarRentalTotalPricing($get, $set);
                                     }
                                 }),
 
@@ -264,7 +335,7 @@ class BookingResource extends Resource
                                 ->columnSpanFull(),
                         ]),
 
-                    // Step 4: Tour Details (Only for TOURS)
+                    // Step 4a: Tour Details (Only for TOURS)
                     Forms\Components\Wizard\Step::make('Tour Details')
                         ->schema([
                             Forms\Components\Grid::make(3)
@@ -326,7 +397,42 @@ class BookingResource extends Resource
                         ])
                         ->visible(fn (Forms\Get $get) => $get('service_type') === 'TOURS'),
 
-                    // Step 5: Pricing & Payment
+                    // Step 4b: Car Rental Details (Only for CAR_RENTAL)
+                    Forms\Components\Wizard\Step::make('Car Rental Details')
+                            ->schema([
+                                Forms\Components\Placeholder::make('car_rental_info')
+                                    ->label('Car Rental Information')
+                                    ->content(function (Forms\Get $get) {
+                                        $packageId = $get('car_rental_package_id');
+                                        if (!$packageId) {
+                                            return 'Select a car rental package to see details';
+                                        }
+
+                                        $package = CarRentalPackage::find($packageId);
+                                        if (!$package) {
+                                            return 'Car package not found';
+                                        }
+
+                                        return "
+                                            <div class='p-4 bg-blue-50 rounded-lg'>
+                                                <h4 class='font-semibold text-blue-900'>{$package->getFullCarName()}</h4>
+                                                <p class='text-blue-700 mt-1'>Pickup and driver details will be arranged separately after booking confirmation.</p>
+                                                <p class='text-sm text-blue-600 mt-2'>Available locations: " . $package->locations->count() . " areas</p>
+                                            </div>
+                                        ";
+                                    })
+                                    ->columnSpanFull(),
+
+                                Forms\Components\Textarea::make('special_requirements')
+                                    ->label('Special Requirements (Optional)')
+                                    ->rows(2)
+                                    ->placeholder('Any special requests for the car rental...')
+                                    ->helperText('Pickup location, driver preferences, etc.')
+                                    ->columnSpanFull(),
+                            ])
+                            ->visible(fn (Forms\Get $get) => $get('service_type') === 'CAR_RENTAL'),
+
+                    // Step 5: Pricing & Payment (Universal)
                     Forms\Components\Wizard\Step::make('Pricing & Payment')
                         ->schema([
                             // Pricing Details
@@ -335,13 +441,13 @@ class BookingResource extends Resource
                                     Forms\Components\Grid::make(3)
                                         ->schema([
                                             Forms\Components\TextInput::make('original_price')
-                                                ->label('Original Price (Per Person)')
+                                                ->label(fn (Forms\Get $get) => $get('service_type') === 'CAR_RENTAL' ? 'Daily Price' : 'Original Price (Per Person)')
                                                 ->required()
                                                 ->numeric()
                                                 ->prefix('৳')
                                                 ->disabled()
                                                 ->dehydrated()
-                                                ->helperText('Base price from tour package'),
+                                                ->helperText(fn (Forms\Get $get) => $get('service_type') === 'CAR_RENTAL' ? 'Daily rental price' : 'Base price from tour package'),
 
                                             Forms\Components\TextInput::make('agent_discount_percent')
                                                 ->label('Agent Commission %')
@@ -352,7 +458,7 @@ class BookingResource extends Resource
                                                 ->helperText('Auto-calculated commission'),
 
                                             Forms\Components\TextInput::make('agent_cost_price')
-                                                ->label('Agent Cost Price (Per Person)')
+                                                ->label(fn (Forms\Get $get) => $get('service_type') === 'CAR_RENTAL' ? 'Agent Daily Price' : 'Agent Cost Price (Per Person)')
                                                 ->numeric()
                                                 ->prefix('৳')
                                                 ->disabled()
@@ -369,7 +475,7 @@ class BookingResource extends Resource
                                                 ->prefix('৳')
                                                 ->disabled()
                                                 ->dehydrated()
-                                                ->helperText('Auto-calculated based on passengers and agent pricing'),
+                                                ->helperText(fn (Forms\Get $get) => $get('service_type') === 'CAR_RENTAL' ? 'Total rental price for all days' : 'Auto-calculated based on passengers and agent pricing'),
 
                                             Forms\Components\TextInput::make('final_amount')
                                                 ->label('Final Amount')
@@ -488,7 +594,7 @@ class BookingResource extends Resource
             ->columns(1);
     }
 
-    // Helper method for availability status
+    // ====================== TOUR AVAILABILITY METHODS ======================
     protected static function getAvailabilityStatus($get)
     {
         $tourPackageId = $get('tour_package_id');
@@ -540,7 +646,6 @@ class BookingResource extends Resource
                     ->whereNotIn('status', ['cancelled'])
                     ->sum(\DB::raw('adults + children'));
             } else {
-                // Set to 0 for other errors to prevent crashes
                 $existingBookings = 0;
             }
         }
@@ -570,7 +675,76 @@ class BookingResource extends Resource
         ");
     }
 
-    // Updated calculation methods
+    // ====================== CAR RENTAL AVAILABILITY METHODS ======================
+    protected static function getCarRentalAvailabilityStatus($get)
+    {
+        $packageId = $get('car_rental_package_id');
+        $pickupDate = $get('service_date');
+        $returnDate = $get('service_end_date');
+
+        if (!$packageId || !$pickupDate || !$returnDate) {
+            return new \Illuminate\Support\HtmlString('
+                <div class="p-4 bg-gray-100 rounded-lg text-center">
+                    <span class="text-gray-500">Select car package and dates to check availability</span>
+                </div>
+            ');
+        }
+
+        $package = CarRentalPackage::find($packageId);
+        if (!$package) {
+            return new \Illuminate\Support\HtmlString('
+                <div class="p-4 bg-red-100 rounded-lg text-center border border-red-200">
+                    <span class="text-red-600 font-medium">⚠️ Invalid car package selected</span>
+                </div>
+            ');
+        }
+
+        $pickupCarbon = Carbon::parse($pickupDate);
+        $returnCarbon = Carbon::parse($returnDate);
+        $rentalDays = $pickupCarbon->diffInDays($returnCarbon) ?: 1;
+
+        // Check availability for each day in the rental period
+        $minAvailable = $package->total_cars;
+        $conflictDates = [];
+
+        for ($date = $pickupCarbon->copy(); $date->lte($returnCarbon); $date->addDay()) {
+            $availableCars = $package->getAvailableCarsForDate($date->format('Y-m-d'));
+            if ($availableCars < 1) {
+                $conflictDates[] = $date->format('d M Y');
+            }
+            $minAvailable = min($minAvailable, $availableCars);
+        }
+
+        $canBook = empty($conflictDates);
+        $statusColor = $canBook ? 'green' : 'red';
+        $statusIcon = $canBook ? '✅' : '❌';
+        $statusText = $canBook ? 'Available' : 'Not Available';
+
+        $conflictText = '';
+        if (!empty($conflictDates)) {
+            $conflictText = '<div class="text-sm text-red-600 mt-1">Conflicts on: ' . implode(', ', array_slice($conflictDates, 0, 3)) . (count($conflictDates) > 3 ? ' +' . (count($conflictDates) - 3) . ' more' : '') . '</div>';
+        }
+
+        return new \Illuminate\Support\HtmlString("
+            <div class='p-4 bg-{$statusColor}-100 rounded-lg border border-{$statusColor}-200'>
+                <div class='flex items-center justify-between'>
+                    <div>
+                        <span class='text-{$statusColor}-700 font-medium'>{$statusIcon} {$statusText}</span>
+                        <div class='text-sm text-{$statusColor}-600 mt-1'>
+                            Rental Period: {$rentalDays} days | Min Available: {$minAvailable} cars
+                        </div>
+                        {$conflictText}
+                    </div>
+                    <div class='text-right text-sm text-{$statusColor}-600'>
+                        <div>Total Cars: {$package->total_cars}</div>
+                        <div>Brand: {$package->car_brand}</div>
+                    </div>
+                </div>
+            </div>
+        ");
+    }
+
+    // ====================== TOUR CALCULATION METHODS ======================
     protected static function calculateCommissionAndPricing($get, $set)
     {
         $serviceType = $get('service_type') ?? 'TOURS';
@@ -632,6 +806,73 @@ class BookingResource extends Resource
         static::calculateFinalAmount($get, $set);
     }
 
+    // ====================== CAR RENTAL CALCULATION METHODS ======================
+    protected static function calculateCarRentalCommissionAndPricing($get, $set)
+    {
+        $agentId = $get('agent_id');
+        $packageId = $get('car_rental_package_id');
+
+        $commissionPercent = 0;
+
+        // Check agent-specific commission first
+        if ($agentId) {
+            $agentCommission = AgentCommission::where('agent_id', $agentId)
+                ->where('service', 'CAR_RENTAL')
+                ->first();
+
+            if ($agentCommission) {
+                $commissionPercent = $agentCommission->commission_percent;
+            }
+        }
+
+        // Fallback to car package commission
+        if ($commissionPercent == 0 && $packageId) {
+            $carPackage = CarRentalPackage::find($packageId);
+            if ($carPackage) {
+                $commissionPercent = $carPackage->agent_commission_percent ?? 0;
+            }
+        }
+
+        $originalPrice = floatval($get('original_price')) ?: 0;
+        $agentCostPrice = $originalPrice * (1 - ($commissionPercent / 100));
+
+        $set('agent_discount_percent', $commissionPercent);
+        $set('agent_cost_price', round($agentCostPrice, 2));
+
+        static::calculateCarRentalTotalPricing($get, $set);
+    }
+
+    protected static function calculateCarRentalTotalPricing($get, $set)
+    {
+        $pickupDate = $get('service_date');
+        $returnDate = $get('service_end_date');
+        $agentId = $get('agent_id');
+
+        if (!$pickupDate || !$returnDate) {
+            return;
+        }
+
+        $pickupCarbon = Carbon::parse($pickupDate);
+        $returnCarbon = Carbon::parse($returnDate);
+        $rentalDays = $pickupCarbon->diffInDays($returnCarbon) ?: 1;
+
+        // Determine which price to use
+        if ($agentId) {
+            // Agent booking - use agent cost price
+            $dailyPrice = floatval($get('agent_cost_price')) ?: 0;
+        } else {
+            // Direct booking - use original price
+            $dailyPrice = floatval($get('original_price')) ?: 0;
+        }
+
+        $totalPrice = $rentalDays * $dailyPrice;
+
+        $set('selling_price', round($totalPrice, 2));
+
+        static::calculateFinalAmount($get, $set);
+    }
+
+    // ====================== UNIVERSAL METHODS ======================
     protected static function calculateFinalAmount($get, $set)
     {
         $sellingPrice = floatval($get('selling_price')) ?: 0;
@@ -724,6 +965,45 @@ class BookingResource extends Resource
             }
         }
     }
+
+    protected static function checkCarRentalAvailability($get, $set)
+    {
+        $packageId = $get('car_rental_package_id');
+        $pickupDate = $get('service_date');
+        $returnDate = $get('service_end_date');
+
+        if (!$packageId || !$pickupDate || !$returnDate) {
+            return;
+        }
+
+        $package = CarRentalPackage::find($packageId);
+        if (!$package) {
+            return;
+        }
+
+        $pickupCarbon = Carbon::parse($pickupDate);
+        $returnCarbon = Carbon::parse($returnDate);
+
+        // Check availability for each day in the rental period
+        $conflictDates = [];
+
+        for ($date = $pickupCarbon->copy(); $date->lte($returnCarbon); $date->addDay()) {
+            $availableCars = $package->getAvailableCarsForDate($date->format('Y-m-d'));
+            if ($availableCars < 1) {
+                $conflictDates[] = $date->format('d M Y');
+            }
+        }
+
+        if (!empty($conflictDates)) {
+            Notification::make()
+                ->danger()
+                ->title('Car Not Available')
+                ->body("Car not available on: " . implode(', ', array_slice($conflictDates, 0, 3)) . (count($conflictDates) > 3 ? ' and ' . (count($conflictDates) - 3) . ' more dates' : ''))
+                ->persistent()
+                ->send();
+        }
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -749,7 +1029,7 @@ class BookingResource extends Resource
 
                 Tables\Columns\TextColumn::make('total_passengers')
                     ->label('PAX')
-                    ->formatStateUsing(fn ($record) => "{$record->adults}A + {$record->children}C")
+                    ->formatStateUsing(fn ($record) => $record->service_type === 'CAR_RENTAL' ? 'N/A' : "{$record->adults}A + {$record->children}C")
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('service_date')
@@ -879,20 +1159,25 @@ class BookingResource extends Resource
                             ->copyable(),
                         Components\TextEntry::make('customer_passport_number'),
                         Components\TextEntry::make('adults')
-                            ->label('Adults'),
+                            ->label('Adults')
+                            ->visible(fn ($record) => $record->service_type !== 'CAR_RENTAL'),
                         Components\TextEntry::make('children')
-                            ->label('Children'),
+                            ->label('Children')
+                            ->visible(fn ($record) => $record->service_type !== 'CAR_RENTAL'),
                     ])
                     ->columns(3),
 
                 Components\Section::make('Service Details')
                     ->schema([
                         Components\TextEntry::make('service_date')
+                            ->label(fn ($record) => $record->service_type === 'CAR_RENTAL' ? 'Pickup Date' : 'Service Date')
                             ->date(),
                         Components\TextEntry::make('service_end_date')
+                            ->label(fn ($record) => $record->service_type === 'CAR_RENTAL' ? 'Return Date' : 'End Date')
                             ->date(),
                         Components\TextEntry::make('duration_days')
-                            ->label('Duration'),
+                            ->label('Duration')
+                            ->visible(fn ($record) => $record->service_end_date),
                         Components\TextEntry::make('special_requirements')
                             ->columnSpanFull(),
                     ])
@@ -927,6 +1212,7 @@ class BookingResource extends Resource
         return [
             RelationManagers\PaymentsRelationManager::class,
             RelationManagers\TourDetailsRelationManager::class,
+            RelationManagers\CarRentalDetailsRelationManager::class,
         ];
     }
 
@@ -972,6 +1258,19 @@ class BookingResource extends Resource
                 $data['room_type'], $data['meal_plan'], $data['guide_language'],
                 $data['emergency_contact'], $data['tour_notes']);
         }
+
+
+        // Store car rental data with package ID - UPDATE THIS SECTION
+        if ($data['service_type'] === 'CAR_RENTAL') {
+            session([
+                'temp_car_details' => [
+                    'car_rental_package_id' => $data['car_rental_package_id'], // ADD THIS LINE
+                    'pickup_date' => $data['service_date'] ?? null,
+                    'return_date' => $data['service_end_date'] ?? null,
+                ]
+            ]);
+        }
+
 
         return $data;
     }
