@@ -164,7 +164,146 @@ class TourPackageResource extends Resource
                             ])->columns(2),
                     ]),
 
-                Section::make('Duration & Pricing')
+                    Section::make('Tour Locations')
+                    ->description('Tour starting point and destination')
+                    ->schema([
+                        Forms\Components\Select::make('tour_type')
+                            ->label('Tour Type')
+                            ->options([
+                                'domestic' => 'Domestic Tour',
+                                'international' => 'International Tour',
+                                'local' => 'Local Tour',
+                            ])
+                            ->default('domestic')
+                            ->required()
+                            ->live()
+                            ->columnSpanFull(),
+
+                        // FROM Location Section
+                        Forms\Components\Fieldset::make('Starting Point (FROM)')
+                            ->schema([
+                                Forms\Components\Grid::make(4)
+                                    ->schema([
+                                        Forms\Components\Select::make('from_country_id')
+                                            ->label('Country')
+                                            ->relationship('fromCountry', 'name')
+                                            ->searchable()
+                                            ->preload()
+                                            ->live()
+                                            ->afterStateUpdated(fn (Forms\Set $set) => $set('from_state_id', null)),
+
+                                        Forms\Components\Select::make('from_state_id')
+                                            ->label('State')
+                                            ->options(
+                                                fn (Forms\Get $get): array =>
+                                                \App\Models\State::query()
+                                                    ->where('country_id', $get('from_country_id'))
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
+                                            )
+                                            ->searchable()
+                                            ->live()
+                                            ->afterStateUpdated(function (Forms\Set $set) {
+                                                $set('from_zella_id', null);
+                                                $set('from_upazilla_id', null);
+                                            }),
+
+                                        Forms\Components\Select::make('from_zella_id')
+                                            ->label('Zella/District')
+                                            ->options(
+                                                fn (Forms\Get $get): array =>
+                                                \App\Models\Zella::query()
+                                                    ->where('state_id', $get('from_state_id'))
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
+                                            )
+                                            ->searchable()
+                                            ->live()
+                                            ->afterStateUpdated(fn (Forms\Set $set) => $set('from_upazilla_id', null)),
+
+                                        Forms\Components\Select::make('from_upazilla_id')
+                                            ->label('Upazilla/Area')
+                                            ->options(
+                                                fn (Forms\Get $get): array =>
+                                                \App\Models\Upazilla::query()
+                                                    ->where('zella_id', $get('from_zella_id'))
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
+                                            )
+                                            ->searchable(),
+                                    ]),
+
+                                Forms\Components\Textarea::make('from_location_details')
+                                    ->label('Specific Starting Location Details')
+                                    ->rows(2)
+                                    ->placeholder('e.g., Airport, Hotel, Specific landmark')
+                                    ->columnSpanFull(),
+                            ]),
+
+                        // TO Location Section
+                        Forms\Components\Fieldset::make('Destination (TO)')
+                            ->schema([
+                                Forms\Components\Grid::make(4)
+                                    ->schema([
+                                        Forms\Components\Select::make('to_country_id')
+                                            ->label('Country')
+                                            ->relationship('toCountry', 'name')
+                                            ->searchable()
+                                            ->preload()
+                                            ->live()
+                                            ->afterStateUpdated(fn (Forms\Set $set) => $set('to_state_id', null)),
+
+                                        Forms\Components\Select::make('to_state_id')
+                                            ->label('State')
+                                            ->options(
+                                                fn (Forms\Get $get): array =>
+                                                \App\Models\State::query()
+                                                    ->where('country_id', $get('to_country_id'))
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
+                                            )
+                                            ->searchable()
+                                            ->live()
+                                            ->afterStateUpdated(function (Forms\Set $set) {
+                                                $set('to_zella_id', null);
+                                                $set('to_upazilla_id', null);
+                                            }),
+
+                                        Forms\Components\Select::make('to_zella_id')
+                                            ->label('Zella/District')
+                                            ->options(
+                                                fn (Forms\Get $get): array =>
+                                                \App\Models\Zella::query()
+                                                    ->where('state_id', $get('to_state_id'))
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
+                                            )
+                                            ->searchable()
+                                            ->live()
+                                            ->afterStateUpdated(fn (Forms\Set $set) => $set('to_upazilla_id', null)),
+
+                                        Forms\Components\Select::make('to_upazilla_id')
+                                            ->label('Upazilla/Area')
+                                            ->options(
+                                                fn (Forms\Get $get): array =>
+                                                \App\Models\Upazilla::query()
+                                                    ->where('zella_id', $get('to_zella_id'))
+                                                    ->pluck('name', 'id')
+                                                    ->toArray()
+                                            )
+                                            ->searchable(),
+                                    ]),
+
+                                Forms\Components\Textarea::make('to_location_details')
+                                    ->label('Specific Destination Details')
+                                    ->rows(2)
+                                    ->placeholder('e.g., Hotel, Resort, Specific attractions')
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
+
+
+                    Section::make('Duration & Pricing')
                     ->description('Tour duration and pricing information')
                     ->schema([
                         Grid::make()
@@ -267,7 +406,8 @@ class TourPackageResource extends Resource
                             ])->columns(2),
                     ]),
 
-                Section::make('Resources & Features')
+
+                    Section::make('Resources & Features')
                     ->description('Additional resources and feature flags')
                     ->schema([
                         Grid::make()
@@ -431,6 +571,37 @@ class TourPackageResource extends Resource
                     ->trueLabel('Popular tours')
                     ->falseLabel('Not popular'),
 
+                    Tables\Filters\SelectFilter::make('tour_type')
+                    ->options([
+                        'domestic' => 'Domestic',
+                        'international' => 'International',
+                        'local' => 'Local',
+                    ]),
+
+                Tables\Filters\SelectFilter::make('from_country')
+                    ->relationship('fromCountry', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('From Country'),
+
+                Tables\Filters\SelectFilter::make('to_country')
+                    ->relationship('toCountry', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('To Country'),
+
+                Tables\Filters\SelectFilter::make('from_state')
+                    ->relationship('fromState', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('From State'),
+
+                Tables\Filters\SelectFilter::make('to_state')
+                    ->relationship('toState', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('To State'),
+
                 Tables\Filters\Filter::make('price_range')
                     ->form([
                         Forms\Components\Grid::make(2)
@@ -574,8 +745,14 @@ class TourPackageResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['title', 'slug', 'description', 'category.name'];
+        return [
+            'title', 'slug', 'description', 'category.name',
+            'fromCountry.name', 'fromState.name', 'fromZella.name', 'fromUpazilla.name',
+            'toCountry.name', 'toState.name', 'toZella.name', 'toUpazilla.name'
+        ];
     }
+
+    // Update the getGlobalSearchResultDetails method:
 
     public static function getGlobalSearchResultDetails(Model $record): array
     {
@@ -583,6 +760,8 @@ class TourPackageResource extends Resource
             'Category' => $record->category->name,
             'Duration' => $record->number_of_days . 'D/' . $record->number_of_nights . 'N',
             'Price' => '$' . number_format($record->base_price_adult, 2),
+            'Route' => $record->getTourRoute(),
+            'Type' => $record->getTourTypeLabel(),
         ];
     }
 }
