@@ -7,7 +7,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
 class Booking extends Model
@@ -16,42 +15,40 @@ class Booking extends Model
     use HasUuids;
 
     protected $fillable = [
-        'service_type', 'booking_reference', 'customer_id', 'agent_id', 'booked_by',
-        'customer_email', 'adults', 'children', 'original_price', 'selling_price',
-        'agent_discount_percent', 'agent_cost_price', 'additional_charges',
-        'discount_amount', 'final_amount', 'paid_amount', 'due_amount',
-        'allow_partial_payment', 'minimum_payment_amount', 'customer_name',
-        'customer_phone', 'customer_passport_number', 'special_requirements',
-        'service_date', 'service_end_date', 'booking_source', 'status',
-        'payment_status', 'admin_override_payment', 'payment_notes',
-        'internal_notes', 'booking_details'
+        'service_type', 'tour_package_id', 'booking_reference', 'booking_source', 'customer_id',
+        'customer_name', 'customer_email', 'customer_phone', 'customer_passport_number',
+        'agent_id', 'adults', 'children', 'service_date', 'service_end_date',
+        'original_price', 'selling_price', 'additional_charges', 'discount_amount',
+        'final_amount', 'paid_amount', 'due_amount', 'payment_status', 'status',
+        'special_requirements', 'allow_partial_payment', 'minimum_payment_amount',
+        'admin_override_payment', 'payment_notes', 'internal_notes', 'booked_by',
+        'agent_discount_percent', 'agent_cost_price',
+        // REMOVED tour-specific fields from here - they go to tour_booking_details table
     ];
 
     protected $casts = [
         'service_date' => 'date',
         'service_end_date' => 'date',
-        'booking_details' => 'array',
         'original_price' => 'decimal:2',
         'selling_price' => 'decimal:2',
+        'additional_charges' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'final_amount' => 'decimal:2',
         'paid_amount' => 'decimal:2',
         'due_amount' => 'decimal:2',
         'agent_discount_percent' => 'decimal:2',
         'agent_cost_price' => 'decimal:2',
-        'additional_charges' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
-        'minimum_payment_amount' => 'decimal:2',
         'allow_partial_payment' => 'boolean',
         'admin_override_payment' => 'boolean',
+        'adults' => 'integer',
+        'children' => 'integer',
     ];
 
     protected $appends = [
         'total_passengers',
-        'remaining_amount',
         'duration_days',
-        'service_status',
         'payment_progress',
-        'formatted_booking_reference'
+        'remaining_amount'
     ];
 
     // === RELATIONSHIPS ===
@@ -72,30 +69,62 @@ class Booking extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Payment::class);
     }
 
-    public function successfulPayments()
-    {
-        return $this->hasMany(Payment::class)->where('status', 'completed');
-    }
-
-    // Tour relationship - auto-loaded based on service_type
     public function tourDetails()
     {
         return $this->hasOne(TourBookingDetail::class);
     }
 
-    // Dynamic service details based on service_type
-    public function getServiceDetailsAttribute()
+    public function tourPackage()
     {
-        return match($this->service_type) {
-            'TOURS' => $this->tourDetails,
-            'CAR_RENTAL' => $this->carRentalDetails ?? null,
-            'FLIGHT' => $this->flightDetails ?? null,
-            'HOTEL' => $this->hotelDetails ?? null,
-            default => null,
-        };
+        return $this->belongsTo(TourPackage::class, 'tour_package_id');
+    }
+
+    // === BOOT METHOD ===
+    protected static function booted()
+    {
+        static::creating(function ($booking) {
+            if (empty($booking->booking_reference)) {
+                $booking->booking_reference = self::generateBookingReference($booking->service_type);
+            }
+
+            // Calculate final amount
+            $booking->final_amount = $booking->calculateFinalAmount();
+            $booking->due_amount = $booking->final_amount;
+        });
+
+        static::created(function ($booking) {
+            // Auto-create tour details if service_type is TOURS and has tour_package_id
+            if ($booking->service_type === 'TOURS' && $booking->tour_package_id) {
+                // Get tour details from session (set by the form)
+                $tourDetails = session('temp_tour_details', []);
+
+                $booking->tourDetails()->create([
+                    'tour_package_id' => $booking->tour_package_id,
+                    'pickup_location' => $tourDetails['pickup_location'] ?? null,
+                    'pickup_time' => $tourDetails['pickup_time'] ?? '08:00',
+                    'drop_location' => $tourDetails['drop_location'] ?? null,
+                    'room_type' => $tourDetails['room_type'] ?? 'twin',
+                    'meal_plan' => $tourDetails['meal_plan'] ?? 'breakfast',
+                    'guide_language' => $tourDetails['guide_language'] ?? 'English',
+                    'emergency_contact' => $tourDetails['emergency_contact'] ?? null,
+                    'tour_notes' => $tourDetails['tour_notes'] ?? null,
+                ]);
+
+                // Clear the session data
+                session()->forget('temp_tour_details');
+            }
+        });
+
+        static::updating(function ($booking) {
+            // Recalculate amounts when updating
+            if ($booking->isDirty(['selling_price', 'additional_charges', 'discount_amount'])) {
+                $booking->final_amount = $booking->calculateFinalAmount();
+                $booking->due_amount = max(0, $booking->final_amount - $booking->paid_amount);
+            }
+        });
     }
 
     // === ATTRIBUTES ===
@@ -104,270 +133,122 @@ class Booking extends Model
         return $this->adults + $this->children;
     }
 
-    public function getRemainingAmountAttribute()
-    {
-        return max(0, $this->final_amount - $this->paid_amount);
-    }
-
     public function getDurationDaysAttribute()
     {
         if (!$this->service_date || !$this->service_end_date) {
-            return 1;
+            return null;
         }
+
         return $this->service_date->diffInDays($this->service_end_date) + 1;
-    }
-
-    public function getServiceStatusAttribute()
-    {
-        if ($this->status === 'cancelled') {
-            return 'Cancelled';
-        }
-        if ($this->status === 'completed') {
-            return 'Completed';
-        }
-
-        $today = Carbon::today();
-        if ($this->service_date && $this->service_date->isToday()) {
-            return 'Today';
-        }
-        if ($this->service_date && $this->service_date->isFuture()) {
-            return 'Upcoming';
-        }
-        if ($this->service_date && $this->service_date->isPast()) {
-            return 'Past Due';
-        }
-
-        return 'Active';
     }
 
     public function getPaymentProgressAttribute()
     {
         if ($this->final_amount <= 0) {
-            return 100;
+            return 0;
         }
+
         return round(($this->paid_amount / $this->final_amount) * 100, 2);
     }
 
-    public function getFormattedBookingReferenceAttribute()
+    public function getRemainingAmountAttribute()
     {
-        return strtoupper($this->booking_reference);
+        return max(0, $this->final_amount - $this->paid_amount);
     }
 
-    // === SCOPES ===
-    public function scopeTours(Builder $query)
-    {
-        return $query->where('service_type', 'TOURS');
-    }
-
-    public function scopeCarRentals(Builder $query)
-    {
-        return $query->where('service_type', 'CAR_RENTAL');
-    }
-
-    public function scopeActive(Builder $query)
-    {
-        return $query->whereIn('status', ['confirmed', 'active']);
-    }
-
-    public function scopePending(Builder $query)
-    {
-        return $query->where('status', 'draft');
-    }
-
-    public function scopeUpcoming(Builder $query)
-    {
-        return $query->where('service_date', '>', Carbon::today());
-    }
-
-    public function scopeToday(Builder $query)
-    {
-        return $query->whereDate('service_date', Carbon::today());
-    }
-
-    public function scopeOverdue(Builder $query)
-    {
-        return $query->where('service_date', '<', Carbon::today())
-                    ->whereNotIn('status', ['completed', 'cancelled']);
-    }
-
-    public function scopeUnpaid(Builder $query)
-    {
-        return $query->where('payment_status', '!=', 'paid');
-    }
-
-    public function scopePartiallyPaid(Builder $query)
-    {
-        return $query->where('payment_status', 'partial');
-    }
-
-    // === BUSINESS LOGIC METHODS ===
+    // === METHODS ===
     public function calculateFinalAmount()
     {
-        $amount = $this->selling_price + $this->additional_charges - $this->discount_amount;
-        return max(0, $amount);
+        return max(0, $this->selling_price + $this->additional_charges - $this->discount_amount);
     }
 
-    public function updatePaymentStatus()
-    {
-        $this->final_amount = $this->calculateFinalAmount();
-
-        if ($this->paid_amount >= $this->final_amount) {
-            $this->payment_status = 'paid';
-            $this->due_amount = 0;
-        } elseif ($this->paid_amount > 0) {
-            $this->payment_status = 'partial';
-            $this->due_amount = $this->final_amount - $this->paid_amount;
-        } else {
-            $this->payment_status = 'pending';
-            $this->due_amount = $this->final_amount;
-        }
-
-        $this->save();
-    }
-
-    public function canMakePayment()
-    {
-        return $this->status !== 'cancelled' &&
-               $this->payment_status !== 'paid' &&
-               $this->remaining_amount > 0;
-    }
-
-    public function canCancel()
-    {
-        return $this->status !== 'cancelled' &&
-               $this->status !== 'completed' &&
-               (!$this->service_date || $this->service_date->isFuture());
-    }
-
-    public function canModify()
-    {
-        return $this->status !== 'cancelled' &&
-               $this->status !== 'completed' &&
-               (!$this->service_date || $this->service_date->isAfter(Carbon::today()->addDay()));
-    }
-
-    public function isRefundable()
-    {
-        return $this->paid_amount > 0 &&
-               $this->status === 'cancelled' &&
-               $this->payment_status !== 'refunded';
-    }
-
-    // === AUTO BOOKING REFERENCE GENERATION ===
-    public static function generateBookingReference($serviceType)
+    public static function generateBookingReference($serviceType = 'TOURS')
     {
         $prefix = match($serviceType) {
-            'TOURS' => 'TR',
+            'TOURS' => 'ST',
             'CAR_RENTAL' => 'CR',
             'FLIGHT' => 'FL',
             'HOTEL' => 'HT',
-            'TRANSFER' => 'TF',
+            'TRANSFER' => 'TR',
             'CRUISE' => 'CS',
             'TRANSPORT' => 'TP',
             'VISA' => 'VS',
             default => 'BK'
         };
 
-        $year = date('Y');
+        $year = date('y');
         $month = date('m');
+
         $count = self::where('service_type', $serviceType)
-                     ->whereYear('created_at', $year)
-                     ->whereMonth('created_at', $month)
-                     ->count() + 1;
+                    ->whereYear('created_at', date('Y'))
+                    ->whereMonth('created_at', date('m'))
+                    ->count() + 1;
 
-        return "{$prefix}-{$year}{$month}-" . str_pad($count, 4, '0', STR_PAD_LEFT);
+        return $prefix . $year . $month . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
-    // === EVENT HANDLING ===
-    protected static function booted()
+    public function canMakePayment()
     {
-        static::creating(function ($booking) {
-            if (empty($booking->booking_reference)) {
-                $booking->booking_reference = self::generateBookingReference($booking->service_type);
-            }
-
-            $booking->final_amount = $booking->calculateFinalAmount();
-            $booking->due_amount = $booking->final_amount;
-        });
-
-        static::updating(function ($booking) {
-            if ($booking->isDirty(['selling_price', 'additional_charges', 'discount_amount'])) {
-                $booking->final_amount = $booking->calculateFinalAmount();
-                $booking->due_amount = max(0, $booking->final_amount - $booking->paid_amount);
-            }
-        });
-
-        static::created(function ($booking) {
-            // Auto-create tour details if service_type is TOURS
-            if ($booking->service_type === 'TOURS') {
-                $booking->tourDetails()->create([
-                    'tour_package_id' => null, // Will be set later
-                    'pickup_time' => '08:00',
-                    'room_type' => 'twin',
-                    'meal_plan' => 'breakfast',
-                    'guide_language' => 'English'
-                ]);
-            }
-        });
+        return $this->status !== 'cancelled' &&
+               $this->payment_status !== 'paid' &&
+               $this->due_amount > 0;
     }
 
-    // === HELPER METHODS ===
-    public function getServiceTypeColorAttribute()
+    public function updatePaymentStatus()
     {
-        return match($this->service_type) {
-            'TOURS' => 'success',
-            'CAR_RENTAL' => 'warning',
-            'FLIGHT' => 'info',
-            'HOTEL' => 'primary',
-            'TRANSFER' => 'secondary',
-            default => 'gray'
-        };
-    }
+        $totalPaid = $this->payments()->where('status', 'completed')->sum('amount');
+        $this->paid_amount = $totalPaid;
+        $this->due_amount = max(0, $this->final_amount - $totalPaid);
 
-    public function getStatusColorAttribute()
-    {
-        return match($this->status) {
-            'confirmed' => 'success',
-            'active' => 'info',
-            'completed' => 'primary',
-            'cancelled' => 'danger',
-            'draft' => 'warning',
-            default => 'gray'
-        };
-    }
-
-    public function getPaymentStatusColorAttribute()
-    {
-        return match($this->payment_status) {
-            'paid' => 'success',
-            'partial' => 'warning',
-            'pending' => 'danger',
-            'refunded' => 'info',
-            'zero_payment' => 'gray',
-            default => 'gray'
-        };
-    }
-
-    // === STATISTICS METHODS ===
-    public static function getBookingStats($period = 'month')
-    {
-        $query = self::query();
-
-        if ($period === 'today') {
-            $query->whereDate('created_at', Carbon::today());
-        } elseif ($period === 'week') {
-            $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } elseif ($period === 'month') {
-            $query->whereMonth('created_at', Carbon::now()->month);
+        if ($totalPaid >= $this->final_amount && $this->final_amount > 0) {
+            $this->payment_status = 'paid';
+        } elseif ($totalPaid > 0) {
+            $this->payment_status = 'partial';
+        } else {
+            $this->payment_status = 'pending';
         }
 
-        return [
-            'total_bookings' => $query->count(),
-            'total_revenue' => $query->sum('final_amount'),
-            'paid_amount' => $query->sum('paid_amount'),
-            'pending_amount' => $query->sum('due_amount'),
-            'tour_bookings' => $query->where('service_type', 'TOURS')->count(),
-            'car_rentals' => $query->where('service_type', 'CAR_RENTAL')->count(),
-        ];
+        $this->save();
+    }
+
+    public function getMinimumPaymentRequired()
+    {
+        if (!$this->allow_partial_payment) {
+            return $this->due_amount;
+        }
+
+        return $this->minimum_payment_amount ?: 0;
+    }
+
+    // === SCOPES ===
+    public function scopeByServiceType($query, $serviceType)
+    {
+        return $query->where('service_type', $serviceType);
+    }
+
+    public function scopeByStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    public function scopeByPaymentStatus($query, $paymentStatus)
+    {
+        return $query->where('payment_status', $paymentStatus);
+    }
+
+    public function scopeByDateRange($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('service_date', [$startDate, $endDate]);
+    }
+
+    public function scopeWithPendingPayments($query)
+    {
+        return $query->whereIn('payment_status', ['pending', 'partial'])
+                    ->where('due_amount', '>', 0);
+    }
+
+    public function scopeForAgent($query, $agentId)
+    {
+        return $query->where('agent_id', $agentId);
     }
 }

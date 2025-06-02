@@ -1,5 +1,7 @@
 <?php
 
+// filepath: app/Models/User.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role',
+        'name', 'email', 'password', 'role', 'phone', // Add 'phone' here
     ];
 
     protected $hidden = [
@@ -42,13 +44,20 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     {
         return $this->hasMany(AgentCommission::class, 'agent_id');
     }
-    public function createdCommissions()
+
+    // Add other relationships as needed
+    public function bookingsAsCustomer()
     {
-        return $this->hasMany(AgentCommission::class, 'created_by');
-    }
-    public function updatedCommissions()
-    {
-        return $this->hasMany(AgentCommission::class, 'updated_by');
+        return $this->hasMany(Booking::class, 'customer_id');
     }
 
+    public function bookingsAsAgent()
+    {
+        return $this->hasMany(Booking::class, 'agent_id');
+    }
+
+    public function bookingsProcessed()
+    {
+        return $this->hasMany(Booking::class, 'booked_by');
+    }
 }

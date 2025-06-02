@@ -34,11 +34,10 @@ class TourBookingDetail extends Model
         return $this->belongsTo(Booking::class);
     }
 
-    // Uncomment when tour_packages table is created
-    // public function tourPackage()
-    // {
-    //     return $this->belongsTo(TourPackage::class);
-    // }
+    public function tourPackage()
+    {
+        return $this->belongsTo(TourPackage::class);
+    }
 
     // === ATTRIBUTES ===
     public function getRoomTypeLabelAttribute()
@@ -63,7 +62,6 @@ class TourBookingDetail extends Model
         };
     }
 
-    // === HELPER METHODS ===
     public function getFormattedPickupTimeAttribute()
     {
         return $this->pickup_time ? $this->pickup_time->format('g:i A') : null;
