@@ -11,7 +11,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('booking_id')->constrained('bookings')->onDelete('cascade');
 
-            $table->unsignedBigInteger('tour_package_id');
+            $table->foreignUuid('tour_package_id');
 
             // Tour-specific details
             $table->string('pickup_location')->nullable();
