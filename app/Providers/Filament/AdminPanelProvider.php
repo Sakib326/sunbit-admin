@@ -28,8 +28,11 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->authGuard('web')
+            ->brandName('Sunbit Travels')
+            ->brandLogo(asset('images/sunbit-logo.png'))
+            ->brandLogoHeight('4rem')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#007100',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
