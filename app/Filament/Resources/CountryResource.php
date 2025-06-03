@@ -17,6 +17,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\CurrencyConverterService;
 
 class CountryResource extends Resource
 {
@@ -55,7 +56,7 @@ class CountryResource extends Resource
                                     ->maxLength(3)
                                     ->helperText('ISO 3166-1 alpha-2/3 country code')
                                     ->formatStateUsing(fn ($state) => Str::upper($state))
-                                    ->placeholder('e.g. US, GBR'),
+                                    ->placeholder('e.g. BD, MY, US'),
 
                                 Forms\Components\Select::make('status')
                                     ->options([
@@ -73,13 +74,112 @@ class CountryResource extends Resource
                         Grid::make()
                             ->schema([
                                 Forms\Components\TextInput::make('currency')
+                                    ->label('Currency Name')
                                     ->maxLength(255)
-                                    ->placeholder('e.g. US Dollar, Euro'),
+                                    ->placeholder('e.g. Bangladeshi Taka, US Dollar')
+                                    ->helperText('Full currency name'),
 
                                 Forms\Components\TextInput::make('currency_symbol')
+                                    ->label('Currency Symbol')
                                     ->maxLength(10)
-                                    ->placeholder('e.g. $, €, £'),
+                                    ->placeholder('e.g. ৳, $, €, £')
+                                    ->helperText('Currency symbol used in display'),
                             ])->columns(2),
+                    ]),
+
+                Section::make('Exchange Rates')
+                    ->description('Currency conversion rates for international pricing')
+                    ->schema([
+                        Grid::make()
+                            ->schema([
+                                Forms\Components\TextInput::make('myr_exchange_rate')
+                                    ->label('Rate to Malaysian Ringgit (MYR)')
+                                    ->numeric()
+                                    ->step(0.0001)
+                                    ->default(1.0000)
+                                    ->required()
+                                    ->minValue(0.0001)
+                                    ->maxValue(9999.9999)
+                                    ->placeholder('1.0000')
+                                    ->helperText('How many MYR for 1 unit of this currency (e.g., 1 BDT = 0.0380 MYR)')
+                                    ->suffixIcon('heroicon-m-currency-dollar')
+                                    ->columnSpan(1),
+
+                                Forms\Components\TextInput::make('usd_exchange_rate')
+                                    ->label('Rate to US Dollar (USD)')
+                                    ->numeric()
+                                    ->step(0.0001)
+                                    ->minValue(0.0001)
+                                    ->maxValue(9999.9999)
+                                    ->placeholder('0.0091')
+                                    ->helperText('How many USD for 1 unit of this currency (e.g., 1 BDT = 0.0091 USD)')
+                                    ->suffixIcon('heroicon-m-currency-dollar')
+                                    ->columnSpan(1),
+
+                                Forms\Components\DateTimePicker::make('exchange_rate_updated_at')
+                                    ->label('Exchange Rate Last Updated')
+                                    ->default(now())
+                                    ->native(false)
+                                    ->displayFormat('M d, Y H:i')
+                                    ->helperText('When these exchange rates were last updated')
+                                    ->suffixIcon('heroicon-m-clock')
+                                    ->columnSpan(2),
+                            ])->columns(2),
+
+                        // Exchange Rate Helper Section
+                        Forms\Components\Placeholder::make('exchange_rate_helper')
+                            ->label('Exchange Rate Calculator')
+                            ->content(new \Illuminate\Support\HtmlString('
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+                                    <div class="flex items-center text-blue-700">
+                                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <strong>How to Calculate Exchange Rates:</strong>
+                                    </div>
+                                    <div class="text-sm text-gray-700 space-y-2">
+                                        <p><strong>MYR Rate Example:</strong> If 1 USD = 4.70 MYR and 1 USD = 110 BDT, then 1 BDT = 4.70/110 = 0.0427 MYR</p>
+                                        <p><strong>USD Rate Example:</strong> If 1 USD = 110 BDT, then 1 BDT = 1/110 = 0.0091 USD</p>
+                                        <p><strong>For Malaysia:</strong> Set MYR rate to 1.0000 (base currency)</p>
+                                    </div>
+                                </div>
+                            ')),
+
+                        // Currency Conversion Preview
+                        Forms\Components\Group::make([
+                            Forms\Components\Placeholder::make('conversion_preview')
+                                ->label('Conversion Preview')
+                                ->content(function ($get) {
+                                    $currency = $get('currency') ?: 'Local Currency';
+                                    $symbol = $get('currency_symbol') ?: '¤';
+                                    $myrRate = $get('myr_exchange_rate') ?: 0;
+                                    $usdRate = $get('usd_exchange_rate') ?: 0;
+
+                                    if ($myrRate <= 0) {
+                                        return new \Illuminate\Support\HtmlString('<div class="text-gray-500">Enter exchange rates to see preview</div>');
+                                    }
+
+                                    $previews = [
+                                        "100 {$symbol} = RM " . number_format(100 * $myrRate, 2),
+                                        "500 {$symbol} = RM " . number_format(500 * $myrRate, 2),
+                                        "1000 {$symbol} = RM " . number_format(1000 * $myrRate, 2),
+                                    ];
+
+                                    if ($usdRate > 0) {
+                                        $previews[] = "100 {$symbol} = $" . number_format(100 * $usdRate, 2);
+                                    }
+
+                                    return new \Illuminate\Support\HtmlString('
+                                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                            <div class="text-green-700 font-medium mb-2">Conversion Examples:</div>
+                                            <div class="space-y-1 text-sm">
+                                                ' . implode('<br>', array_map(fn ($p) => '<div>' . $p . '</div>', $previews)) . '
+                                            </div>
+                                        </div>
+                                    ');
+                                })
+                                ->live(),
+                        ]),
                     ]),
 
                 // Add a file upload for the flag (store in a separate table or use a JSON field)
@@ -126,10 +226,12 @@ class CountryResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
+
                 Tables\Columns\TextColumn::make('code')
                     ->label('ISO Code')
                     ->formatStateUsing(fn ($state) => Str::upper($state))
                     ->searchable(),
+
                 Tables\Columns\IconColumn::make('status')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
@@ -138,18 +240,46 @@ class CountryResource extends Resource
                     ->falseColor('danger')
                     ->sortable()
                     ->getStateUsing(fn (Country $record): bool => $record->status === 'active'),
+
                 Tables\Columns\TextColumn::make('currency')
+                    ->label('Currency')
                     ->searchable()
                     ->formatStateUsing(fn ($state, Country $record) =>
                         $state . ($record->currency_symbol ? ' (' . $record->currency_symbol . ')' : '')),
+
+                // Add Exchange Rate Columns
+                Tables\Columns\TextColumn::make('myr_exchange_rate')
+                    ->label('MYR Rate')
+                    ->numeric(4)
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => number_format($state, 4))
+                    ->tooltip('Rate to Malaysian Ringgit'),
+
+                Tables\Columns\TextColumn::make('usd_exchange_rate')
+                    ->label('USD Rate')
+                    ->numeric(4)
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => $state ? number_format($state, 4) : '-')
+                    ->tooltip('Rate to US Dollar'),
+
+                Tables\Columns\TextColumn::make('exchange_rate_updated_at')
+                    ->label('Rate Updated')
+                    ->dateTime('M d, H:i')
+                    ->sortable()
+                    ->tooltip('Last exchange rate update')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('states_count')
                     ->counts('states')
                     ->label('States')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -162,18 +292,65 @@ class CountryResource extends Resource
                         'inactive' => 'Inactive',
                     ])
                     ->attribute('status'),
+
                 Tables\Filters\TrashedFilter::make(),
+
                 Tables\Filters\Filter::make('with_states')
                     ->label('Has States')
                     ->query(fn (Builder $query) => $query->has('states')),
+
                 Tables\Filters\Filter::make('without_states')
                     ->label('No States')
                     ->query(fn (Builder $query) => $query->doesntHave('states')),
+
+                // Add Exchange Rate Filters
+                Tables\Filters\Filter::make('outdated_rates')
+                    ->label('Outdated Exchange Rates')
+                    ->query(fn (Builder $query) => $query->where(function ($q) {
+                        $q->whereNull('exchange_rate_updated_at')
+                          ->orWhere('exchange_rate_updated_at', '<', now()->subHours(24));
+                    }))
+                    ->indicator('Outdated Rates'),
+
+                Tables\Filters\Filter::make('no_usd_rate')
+                    ->label('Missing USD Rate')
+                    ->query(fn (Builder $query) => $query->whereNull('usd_exchange_rate'))
+                    ->indicator('No USD Rate'),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
+
+                    // Add Update Exchange Rate Action
+                    Tables\Actions\Action::make('updateExchangeRate')
+                        ->icon('heroicon-o-arrow-path')
+                        ->label('Update Exchange Rate')
+                        ->color('warning')
+                        ->form([
+                            Forms\Components\TextInput::make('myr_rate')
+                                ->label('New MYR Rate')
+                                ->numeric()
+                                ->step(0.0001)
+                                ->required(),
+                            Forms\Components\TextInput::make('usd_rate')
+                                ->label('New USD Rate')
+                                ->numeric()
+                                ->step(0.0001),
+                        ])
+                        ->action(function (Country $record, array $data) {
+                            $record->update([
+                                'myr_exchange_rate' => $data['myr_rate'],
+                                'usd_exchange_rate' => $data['usd_rate'],
+                                'exchange_rate_updated_at' => now(),
+                            ]);
+
+                            Notification::make()
+                                ->title('Exchange rate updated for ' . $record->name)
+                                ->success()
+                                ->send();
+                        }),
+
                     Tables\Actions\Action::make('toggleStatus')
                         ->icon(fn (Country $record) => $record->status === 'active' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
                         ->label(fn (Country $record) => $record->status === 'active' ? 'Deactivate' : 'Activate')
@@ -188,6 +365,7 @@ class CountryResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+
                     Tables\Actions\DeleteAction::make()
                         ->requiresConfirmation(),
                     Tables\Actions\RestoreAction::make(),
@@ -196,6 +374,30 @@ class CountryResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    // Add Bulk Update Exchange Rates
+                    Tables\Actions\BulkAction::make('updateRates')
+                        ->icon('heroicon-o-arrow-path')
+                        ->label('Update Exchange Rates')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function ($records) {
+                            $currencyService = new CurrencyConverterService();
+                            $success = $currencyService->updateExchangeRates();
+
+                            if ($success) {
+                                Notification::make()
+                                    ->title('Exchange rates updated successfully')
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Failed to update exchange rates')
+                                    ->danger()
+                                    ->send();
+                            }
+                        }),
+
                     Tables\Actions\BulkAction::make('activate')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
@@ -209,6 +411,7 @@ class CountryResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+
                     Tables\Actions\BulkAction::make('deactivate')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
@@ -222,6 +425,7 @@ class CountryResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
@@ -279,6 +483,7 @@ class CountryResource extends Resource
         return [
             'ISO Code' => $record->code,
             'Status' => ucfirst($record->status),
+            'MYR Rate' => $record->myr_exchange_rate ? number_format($record->myr_exchange_rate, 4) : 'Not set',
         ];
     }
 }
