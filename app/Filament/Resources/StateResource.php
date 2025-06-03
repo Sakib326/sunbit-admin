@@ -91,6 +91,38 @@ class StateResource extends Resource
                             ])->columns(2),
                     ]),
 
+                // ✅ ADD NEW DESCRIPTION SECTION
+                Section::make('Description & Details')
+                    ->description('Detailed information about the state')
+                    ->schema([
+                        Forms\Components\RichEditor::make('description')
+                            ->label('State Description')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'bulletList',
+                                'orderedList',
+                                'h2',
+                                'h3',
+                                'link',
+                                'blockquote',
+                            ])
+                            ->placeholder('Write a detailed description about this state, its attractions, culture, history, etc.')
+                            ->helperText('This description will be used on the frontend to showcase the state')
+                            ->columnSpanFull(),
+
+                        Forms\Components\Toggle::make('is_top_destination')
+                            ->label('Top Destination')
+                            ->helperText('Mark this state as a top travel destination')
+                            ->inline(false)
+                            ->onIcon('heroicon-m-star')
+                            ->offIcon('heroicon-m-star')
+                            ->onColor('warning')
+                            ->columnSpanFull(),
+                    ]),
+
                 Section::make('State Settings')
                     ->schema([
                         Grid::make()
@@ -147,6 +179,27 @@ class StateResource extends Resource
                     ->searchable()
                     ->formatStateUsing(fn ($state) => $state ? strtoupper($state) : '—'),
 
+                // ✅ ADD TOP DESTINATION COLUMN
+                Tables\Columns\IconColumn::make('is_top_destination')
+                    ->label('Top Dest.')
+                    ->boolean()
+                    ->trueIcon('heroicon-s-star')
+                    ->falseIcon('heroicon-o-star')
+                    ->trueColor('warning')
+                    ->falseColor('gray')
+                    ->sortable()
+                    ->tooltip('Top Destination'),
+
+                // ✅ ADD DESCRIPTION EXCERPT COLUMN
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Description')
+                    ->limit(50)
+                    ->tooltip(function ($record) {
+                        return $record->getDescriptionExcerpt(200);
+                    })
+                    ->html()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('status')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
@@ -190,6 +243,18 @@ class StateResource extends Resource
                     ])
                     ->attribute('status'),
 
+                // ✅ ADD TOP DESTINATION FILTER
+                Tables\Filters\TernaryFilter::make('is_top_destination')
+                    ->label('Top Destination')
+                    ->placeholder('All states')
+                    ->trueLabel('Top destinations only')
+                    ->falseLabel('Regular states only'),
+
+                // ✅ ADD DESCRIPTION FILTER
+                Tables\Filters\Filter::make('has_description')
+                    ->label('Has Description')
+                    ->query(fn (Builder $query) => $query->whereNotNull('description')->where('description', '!=', '')),
+
                 Tables\Filters\TrashedFilter::make(),
 
                 Tables\Filters\Filter::make('with_zellas')
@@ -204,6 +269,23 @@ class StateResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
+
+                    // ✅ ADD TOGGLE TOP DESTINATION ACTION
+                    Tables\Actions\Action::make('toggleTopDestination')
+                        ->icon(fn (State $record) => $record->is_top_destination ? 'heroicon-s-star' : 'heroicon-o-star')
+                        ->label(fn (State $record) => $record->is_top_destination ? 'Remove from Top' : 'Mark as Top')
+                        ->color(fn (State $record) => $record->is_top_destination ? 'gray' : 'warning')
+                        ->requiresConfirmation()
+                        ->action(function (State $record) {
+                            $record->is_top_destination = !$record->is_top_destination;
+                            $record->save();
+
+                            Notification::make()
+                                ->title($record->name . ' ' . ($record->is_top_destination ? 'marked as top destination' : 'removed from top destinations'))
+                                ->success()
+                                ->send();
+                        }),
+
                     Tables\Actions\Action::make('toggleStatus')
                         ->icon(fn (State $record) => $record->status === 'active' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
                         ->label(fn (State $record) => $record->status === 'active' ? 'Deactivate' : 'Activate')
@@ -218,6 +300,7 @@ class StateResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+
                     Tables\Actions\DeleteAction::make()
                         ->requiresConfirmation(),
                     Tables\Actions\RestoreAction::make(),
@@ -226,6 +309,37 @@ class StateResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    // ✅ ADD BULK TOP DESTINATION ACTIONS
+                    Tables\Actions\BulkAction::make('markAsTopDestination')
+                        ->icon('heroicon-s-star')
+                        ->color('warning')
+                        ->label('Mark as Top Destinations')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $count = $records->count();
+                            $records->each->update(['is_top_destination' => true]);
+
+                            Notification::make()
+                                ->title("Marked {$count} states as top destinations")
+                                ->success()
+                                ->send();
+                        }),
+
+                    Tables\Actions\BulkAction::make('removeFromTopDestination')
+                        ->icon('heroicon-o-star')
+                        ->color('gray')
+                        ->label('Remove from Top Destinations')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $count = $records->count();
+                            $records->each->update(['is_top_destination' => false]);
+
+                            Notification::make()
+                                ->title("Removed {$count} states from top destinations")
+                                ->success()
+                                ->send();
+                        }),
+
                     Tables\Actions\BulkAction::make('activate')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
@@ -239,6 +353,7 @@ class StateResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+
                     Tables\Actions\BulkAction::make('deactivate')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
@@ -252,6 +367,7 @@ class StateResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
