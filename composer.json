@@ -9,6 +9,7 @@
         "php": "^8.2",
         "amidesfahani/filament-tinyeditor": "^2.1",
         "awcodes/filament-tiptap-editor": "^3.5",
+        "barryvdh/laravel-dompdf": "^3.1",
         "filament/filament": "^3.3",
         "knuckleswtf/scribe": "^5.2",
         "laravel/framework": "^12.0",

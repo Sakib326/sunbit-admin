@@ -1120,6 +1120,26 @@ class BookingResource extends Resource
                     ->color('info')
                     ->visible(fn ($record) => $record->payments()->count() > 0)
                     ->url(fn ($record) => PaymentResource::getUrl('index') . '?tableFilters[booking_id][value]=' . $record->id),
+
+                    Tables\Actions\ActionGroup::make([
+                        Tables\Actions\Action::make('customer_receipt')
+                        ->label('Customer Receipt')
+                        ->icon('heroicon-o-document-text')
+                        ->color('primary')
+                        ->url(fn ($record) => route('booking.customer-receipt', $record))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('agent_receipt')
+                        ->label('Agent Receipt')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('success')
+                        ->visible(fn ($record) => $record->agent_id !== null)
+                        ->url(fn ($record) => route('booking.agent-receipt', $record))
+                        ->openUrlInNewTab(),
+                    ])
+                    ->label('Generate Receipt')
+                    ->icon('heroicon-o-printer')
+                    ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

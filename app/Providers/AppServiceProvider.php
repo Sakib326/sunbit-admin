@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
                 Storage::disk('public')->makeDirectory('state-images');
             }
         }
+
+        Blade::directive('clean', function ($expression) {
+            return "<?php echo preg_replace('/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/', '', mb_convert_encoding($expression, 'UTF-8', 'auto')); ?>";
+        });
 
     }
 }
