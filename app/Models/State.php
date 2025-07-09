@@ -64,4 +64,24 @@ class State extends Model
             ? substr(strip_tags($this->description), 0, $length) . '...'
             : strip_tags($this->description);
     }
+
+    public function getFeaturedImageAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
+
+    public function tourPackagesFrom()
+    {
+        return $this->hasMany(\App\Models\TourPackage::class, 'from_state_id');
+    }
+
+    public function tourPackagesTo()
+    {
+        return $this->hasMany(\App\Models\TourPackage::class, 'to_state_id');
+    }
+
+    public function tourPackages()
+    {
+        return $this->tourPackagesFrom()->union($this->tourPackagesTo());
+    }
 }

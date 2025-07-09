@@ -33,8 +33,20 @@ class TourCategory extends Model
         });
     }
 
-    public function packages()
+    // Fix: Change from 'packages' to 'tourPackages' to match the controller
+    public function tourPackages()
     {
         return $this->hasMany(TourPackage::class, 'category_id');
+    }
+
+    // Keep old method for backward compatibility
+    public function packages()
+    {
+        return $this->tourPackages();
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
     }
 }

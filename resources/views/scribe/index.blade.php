@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Laravel API Documentation</title>
+    <title>Sunbit Travels API Documentation</title>
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 
@@ -26,7 +26,7 @@
             </style>
 
     <script>
-        var tryItOutBaseUrl = "http://localhost:8000";
+        var tryItOutBaseUrl = "http://127.0.0.1:8000";
         var useCsrf = Boolean();
         var csrfUrl = "/sanctum/csrf-cookie";
     </script>
@@ -118,7 +118,10 @@
                     <a href="#location-management">Location Management</a>
                 </li>
                                     <ul id="tocify-subheader-location-management" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="location-management-GETapi-locations-countries">
+                                                    <li class="tocify-item level-2" data-unique="location-management-GETapi-destinations-top">
+                                <a href="#location-management-GETapi-destinations-top">Get top 8 destinations</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="location-management-GETapi-locations-countries">
                                 <a href="#location-management-GETapi-locations-countries">Get all countries</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="location-management-GETapi-locations-countries--id-">
@@ -195,6 +198,34 @@
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-tour-management" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="tour-management">
+                    <a href="#tour-management">Tour Management</a>
+                </li>
+                                    <ul id="tocify-subheader-tour-management" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="tour-management-GETapi-tour-categories">
+                                <a href="#tour-management-GETapi-tour-categories">Get tour categories</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours">
+                                <a href="#tour-management-GETapi-tours">Get all tours with filtering, pagination and sorting</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours--id-">
+                                <a href="#tour-management-GETapi-tours--id-">Get a specific tour</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours-featured-list">
+                                <a href="#tour-management-GETapi-tours-featured-list">Get featured tours</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours-popular-list">
+                                <a href="#tour-management-GETapi-tours-popular-list">Get popular tours (admin marked + most booked)</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours-search-query">
+                                <a href="#tour-management-GETapi-tours-search-query">Search tours</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours-category--category_id-">
+                                <a href="#tour-management-GETapi-tours-category--category_id-">Get tours by category</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
             </div>
 
     <ul class="toc-footer" id="toc-footer">
@@ -204,7 +235,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: April 28, 2025</li>
+        <li>Last updated: July 9, 2025</li>
     </ul>
 </div>
 
@@ -213,7 +244,7 @@
     <div class="content">
         <h1 id="introduction">Introduction</h1>
 <aside>
-    <strong>Base URL</strong>: <code>http://localhost:8000</code>
+    <strong>Base URL</strong>: <code>http://127.0.0.1:8000</code>
 </aside>
 <pre><code>This documentation aims to provide all the information you need to work with our API.
 
@@ -240,7 +271,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/register" \
+    "http://127.0.0.1:8000/api/register" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -255,7 +286,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/register"
+    "http://127.0.0.1:8000/api/register"
 );
 
 const headers = {
@@ -447,7 +478,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/login" \
+    "http://127.0.0.1:8000/api/login" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -459,7 +490,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/login"
+    "http://127.0.0.1:8000/api/login"
 );
 
 const headers = {
@@ -625,7 +656,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/forgot-password" \
+    "http://127.0.0.1:8000/api/forgot-password" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -636,7 +667,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/forgot-password"
+    "http://127.0.0.1:8000/api/forgot-password"
 );
 
 const headers = {
@@ -763,7 +794,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/reset-password" \
+    "http://127.0.0.1:8000/api/reset-password" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -777,7 +808,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/reset-password"
+    "http://127.0.0.1:8000/api/reset-password"
 );
 
 const headers = {
@@ -950,14 +981,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/logout" \
+    "http://127.0.0.1:8000/api/logout" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/logout"
+    "http://127.0.0.1:8000/api/logout"
 );
 
 const headers = {
@@ -1068,14 +1099,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/me" \
+    --get "http://127.0.0.1:8000/api/me" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/me"
+    "http://127.0.0.1:8000/api/me"
 );
 
 const headers = {
@@ -1195,7 +1226,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/reset-password/consequatur" \
+    --get "http://127.0.0.1:8000/api/reset-password/consequatur" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1209,7 +1240,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/reset-password/consequatur"
+    "http://127.0.0.1:8000/api/reset-password/consequatur"
 );
 
 const headers = {
@@ -1384,14 +1415,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/email/verify/17/consequatur" \
+    --get "http://127.0.0.1:8000/api/email/verify/17/consequatur" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/email/verify/17/consequatur"
+    "http://127.0.0.1:8000/api/email/verify/17/consequatur"
 );
 
 const headers = {
@@ -1525,14 +1556,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/email/verification-notification" \
+    "http://127.0.0.1:8000/api/email/verification-notification" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/email/verification-notification"
+    "http://127.0.0.1:8000/api/email/verification-notification"
 );
 
 const headers = {
@@ -1642,14 +1673,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/admin-action" \
+    "http://127.0.0.1:8000/api/admin-action" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/admin-action"
+    "http://127.0.0.1:8000/api/admin-action"
 );
 
 const headers = {
@@ -1750,14 +1781,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/agent-action" \
+    "http://127.0.0.1:8000/api/agent-action" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/agent-action"
+    "http://127.0.0.1:8000/api/agent-action"
 );
 
 const headers = {
@@ -1849,7 +1880,155 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
     <p>APIs for managing user location</p>
 
-                                <h2 id="location-management-GETapi-locations-countries">Get all countries</h2>
+                                <h2 id="location-management-GETapi-destinations-top">Get top 8 destinations</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-destinations-top">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/destinations/top?status=active" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/destinations/top"
+);
+
+const params = {
+    "status": "active",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-destinations-top">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;Cox&#039;s Bazar&quot;,
+            &quot;slug&quot;: &quot;coxs-bazar&quot;,
+            &quot;description&quot;: &quot;World&#039;s longest sea beach&quot;,
+            &quot;short_description&quot;: &quot;Beautiful beach destination&quot;,
+            &quot;image&quot;: &quot;https://example.com/coxs-bazar.jpg&quot;,
+            &quot;status&quot;: &quot;active&quot;,
+            &quot;tours_count&quot;: 15,
+            &quot;average_price&quot;: 12500,
+            &quot;created_at&quot;: &quot;2023-04-29T10:00:00.000000Z&quot;
+        }
+    ]
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-destinations-top" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-destinations-top"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-destinations-top"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-destinations-top" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-destinations-top">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-destinations-top" data-method="GET"
+      data-path="api/destinations/top"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-destinations-top', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-destinations-top"
+                    onclick="tryItOut('GETapi-destinations-top');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-destinations-top"
+                    onclick="cancelTryOut('GETapi-destinations-top');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-destinations-top"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/destinations/top</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-destinations-top"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-destinations-top"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-destinations-top"
+               value="active"
+               data-component="query">
+    <br>
+<p>Filter by status (active/inactive). Example: <code>active</code></p>
+            </div>
+                </form>
+
+                    <h2 id="location-management-GETapi-locations-countries">Get all countries</h2>
 
 <p>
 </p>
@@ -1862,14 +2041,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/countries?status=active&amp;trashed=1" \
+    --get "http://127.0.0.1:8000/api/locations/countries?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/countries"
+    "http://127.0.0.1:8000/api/locations/countries"
 );
 
 const params = {
@@ -2031,14 +2210,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/countries/1" \
+    --get "http://127.0.0.1:8000/api/locations/countries/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/countries/1"
+    "http://127.0.0.1:8000/api/locations/countries/1"
 );
 
 const headers = {
@@ -2170,7 +2349,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/countries" \
+    "http://127.0.0.1:8000/api/locations/countries" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -2186,7 +2365,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/countries"
+    "http://127.0.0.1:8000/api/locations/countries"
 );
 
 const headers = {
@@ -2384,7 +2563,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/locations/countries/1" \
+    "http://127.0.0.1:8000/api/locations/countries/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -2400,7 +2579,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/countries/1"
+    "http://127.0.0.1:8000/api/locations/countries/1"
 );
 
 const headers = {
@@ -2610,14 +2789,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/locations/countries/1" \
+    "http://127.0.0.1:8000/api/locations/countries/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/countries/1"
+    "http://127.0.0.1:8000/api/locations/countries/1"
 );
 
 const headers = {
@@ -2739,14 +2918,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/countries/1/restore" \
+    "http://127.0.0.1:8000/api/locations/countries/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/countries/1/restore"
+    "http://127.0.0.1:8000/api/locations/countries/1/restore"
 );
 
 const headers = {
@@ -2868,14 +3047,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/countries/1/states?status=active&amp;trashed=1" \
+    --get "http://127.0.0.1:8000/api/locations/countries/1/states?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/countries/1/states"
+    "http://127.0.0.1:8000/api/locations/countries/1/states"
 );
 
 const params = {
@@ -3048,14 +3227,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/states/1" \
+    --get "http://127.0.0.1:8000/api/locations/states/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/states/1"
+    "http://127.0.0.1:8000/api/locations/states/1"
 );
 
 const headers = {
@@ -3191,7 +3370,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/states" \
+    "http://127.0.0.1:8000/api/locations/states" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -3206,7 +3385,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/states"
+    "http://127.0.0.1:8000/api/locations/states"
 );
 
 const headers = {
@@ -3391,7 +3570,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/locations/states/1" \
+    "http://127.0.0.1:8000/api/locations/states/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -3406,7 +3585,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/states/1"
+    "http://127.0.0.1:8000/api/locations/states/1"
 );
 
 const headers = {
@@ -3603,14 +3782,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/locations/states/1" \
+    "http://127.0.0.1:8000/api/locations/states/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/states/1"
+    "http://127.0.0.1:8000/api/locations/states/1"
 );
 
 const headers = {
@@ -3732,14 +3911,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/states/1/restore" \
+    "http://127.0.0.1:8000/api/locations/states/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/states/1/restore"
+    "http://127.0.0.1:8000/api/locations/states/1/restore"
 );
 
 const headers = {
@@ -3861,14 +4040,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/states/1/zellas?status=active&amp;trashed=1" \
+    --get "http://127.0.0.1:8000/api/locations/states/1/zellas?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/states/1/zellas"
+    "http://127.0.0.1:8000/api/locations/states/1/zellas"
 );
 
 const params = {
@@ -4041,14 +4220,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/zellas/1" \
+    --get "http://127.0.0.1:8000/api/locations/zellas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/zellas/1"
+    "http://127.0.0.1:8000/api/locations/zellas/1"
 );
 
 const headers = {
@@ -4188,7 +4367,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/zellas" \
+    "http://127.0.0.1:8000/api/locations/zellas" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -4203,7 +4382,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/zellas"
+    "http://127.0.0.1:8000/api/locations/zellas"
 );
 
 const headers = {
@@ -4388,7 +4567,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/locations/zellas/1" \
+    "http://127.0.0.1:8000/api/locations/zellas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -4403,7 +4582,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/zellas/1"
+    "http://127.0.0.1:8000/api/locations/zellas/1"
 );
 
 const headers = {
@@ -4600,14 +4779,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/locations/zellas/1" \
+    "http://127.0.0.1:8000/api/locations/zellas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/zellas/1"
+    "http://127.0.0.1:8000/api/locations/zellas/1"
 );
 
 const headers = {
@@ -4729,14 +4908,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/zellas/1/restore" \
+    "http://127.0.0.1:8000/api/locations/zellas/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/zellas/1/restore"
+    "http://127.0.0.1:8000/api/locations/zellas/1/restore"
 );
 
 const headers = {
@@ -4858,14 +5037,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/zellas/1/upazillas?status=active&amp;trashed=1" \
+    --get "http://127.0.0.1:8000/api/locations/zellas/1/upazillas?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/zellas/1/upazillas"
+    "http://127.0.0.1:8000/api/locations/zellas/1/upazillas"
 );
 
 const params = {
@@ -5039,14 +5218,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/upazillas/1" \
+    --get "http://127.0.0.1:8000/api/locations/upazillas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/upazillas/1"
+    "http://127.0.0.1:8000/api/locations/upazillas/1"
 );
 
 const headers = {
@@ -5188,7 +5367,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/upazillas" \
+    "http://127.0.0.1:8000/api/locations/upazillas" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -5204,7 +5383,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/upazillas"
+    "http://127.0.0.1:8000/api/locations/upazillas"
 );
 
 const headers = {
@@ -5402,7 +5581,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/locations/upazillas/1" \
+    "http://127.0.0.1:8000/api/locations/upazillas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -5418,7 +5597,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/upazillas/1"
+    "http://127.0.0.1:8000/api/locations/upazillas/1"
 );
 
 const headers = {
@@ -5628,14 +5807,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/locations/upazillas/1" \
+    "http://127.0.0.1:8000/api/locations/upazillas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/upazillas/1"
+    "http://127.0.0.1:8000/api/locations/upazillas/1"
 );
 
 const headers = {
@@ -5757,14 +5936,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/locations/upazillas/1/restore" \
+    "http://127.0.0.1:8000/api/locations/upazillas/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/upazillas/1/restore"
+    "http://127.0.0.1:8000/api/locations/upazillas/1/restore"
 );
 
 const headers = {
@@ -5886,14 +6065,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/locations/hierarchy?status=active" \
+    --get "http://127.0.0.1:8000/api/locations/hierarchy?status=active" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/locations/hierarchy"
+    "http://127.0.0.1:8000/api/locations/hierarchy"
 );
 
 const params = {
@@ -6041,6 +6220,1398 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="query">
     <br>
 <p>Filter by status (active/inactive). Example: <code>active</code></p>
+            </div>
+                </form>
+
+                <h1 id="tour-management">Tour Management</h1>
+
+    <p>APIs for managing tours and tour packages</p>
+
+                                <h2 id="tour-management-GETapi-tour-categories">Get tour categories</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-tour-categories">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/tour-categories?status=active" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/tour-categories"
+);
+
+const params = {
+    "status": "active",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-tour-categories">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;Beach Tours&quot;,
+            &quot;description&quot;: &quot;Beach and coastal tours&quot;,
+            &quot;status&quot;: &quot;active&quot;,
+            &quot;tours_count&quot;: 15,
+            &quot;created_at&quot;: &quot;2023-04-29T10:00:00.000000Z&quot;
+        }
+    ]
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-tour-categories" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-tour-categories"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-tour-categories"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-tour-categories" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-tour-categories">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-tour-categories" data-method="GET"
+      data-path="api/tour-categories"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tour-categories', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-tour-categories"
+                    onclick="tryItOut('GETapi-tour-categories');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-tour-categories"
+                    onclick="cancelTryOut('GETapi-tour-categories');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-tour-categories"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/tour-categories</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-tour-categories"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-tour-categories"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-tour-categories"
+               value="active"
+               data-component="query">
+    <br>
+<p>Filter by status (active/inactive). Example: <code>active</code></p>
+            </div>
+                </form>
+
+                    <h2 id="tour-management-GETapi-tours">Get all tours with filtering, pagination and sorting</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-tours">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/tours?status=active&amp;category_id=1&amp;tour_type=domestic&amp;from_state_id=1&amp;to_state_id=2&amp;min_price=1000&amp;max_price=5000&amp;duration_min=3&amp;duration_max=10&amp;search=beach&amp;sort_by=base_price_adult&amp;sort_order=asc&amp;per_page=15&amp;page=1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/tours"
+);
+
+const params = {
+    "status": "active",
+    "category_id": "1",
+    "tour_type": "domestic",
+    "from_state_id": "1",
+    "to_state_id": "2",
+    "min_price": "1000",
+    "max_price": "5000",
+    "duration_min": "3",
+    "duration_max": "10",
+    "search": "beach",
+    "sort_by": "base_price_adult",
+    "sort_order": "asc",
+    "per_page": "15",
+    "page": "1",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-tours">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: &quot;uuid-here&quot;,
+            &quot;name&quot;: &quot;Cox&#039;s Bazar Beach Tour&quot;,
+            &quot;slug&quot;: &quot;coxs-bazar-beach-tour&quot;,
+            &quot;description&quot;: &quot;Beautiful beach tour package&quot;,
+            &quot;base_price_adult&quot;: 15000,
+            &quot;base_price_child&quot;: 12000,
+            &quot;duration_days&quot;: 3,
+            &quot;duration_nights&quot;: 2,
+            &quot;max_booking_per_day&quot;: 20,
+            &quot;tour_type&quot;: &quot;domestic&quot;,
+            &quot;status&quot;: &quot;active&quot;,
+            &quot;is_featured&quot;: true,
+            &quot;category&quot;: {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;Beach Tours&quot;
+            },
+            &quot;from_state&quot;: {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;Dhaka&quot;
+            },
+            &quot;to_state&quot;: {
+                &quot;id&quot;: 2,
+                &quot;name&quot;: &quot;Chittagong&quot;
+            },
+            &quot;tour_route&quot;: &quot;Dhaka &rarr; Chittagong&quot;,
+            &quot;bookings_count&quot;: 15,
+            &quot;created_at&quot;: &quot;2023-04-29T10:00:00.000000Z&quot;
+        }
+    ],
+    &quot;meta&quot;: {
+        &quot;current_page&quot;: 1,
+        &quot;last_page&quot;: 5,
+        &quot;per_page&quot;: 15,
+        &quot;total&quot;: 75,
+        &quot;from&quot;: 1,
+        &quot;to&quot;: 15
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-tours" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-tours"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-tours"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-tours" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-tours">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-tours" data-method="GET"
+      data-path="api/tours"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-tours"
+                    onclick="tryItOut('GETapi-tours');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-tours"
+                    onclick="cancelTryOut('GETapi-tours');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-tours"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/tours</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-tours"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-tours"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-tours"
+               value="active"
+               data-component="query">
+    <br>
+<p>Filter by status (active/inactive/draft). Example: <code>active</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="category_id"                data-endpoint="GETapi-tours"
+               value="1"
+               data-component="query">
+    <br>
+<p>Filter by category ID. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>tour_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="tour_type"                data-endpoint="GETapi-tours"
+               value="domestic"
+               data-component="query">
+    <br>
+<p>Filter by tour type (domestic/international/local). Example: <code>domestic</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>from_state_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="from_state_id"                data-endpoint="GETapi-tours"
+               value="1"
+               data-component="query">
+    <br>
+<p>Filter by departure state ID. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>to_state_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="to_state_id"                data-endpoint="GETapi-tours"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter by destination state ID. Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>min_price</code></b>&nbsp;&nbsp;
+<small>number</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="min_price"                data-endpoint="GETapi-tours"
+               value="1000"
+               data-component="query">
+    <br>
+<p>Filter by minimum price. Example: <code>1000</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>max_price</code></b>&nbsp;&nbsp;
+<small>number</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="max_price"                data-endpoint="GETapi-tours"
+               value="5000"
+               data-component="query">
+    <br>
+<p>Filter by maximum price. Example: <code>5000</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>duration_min</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="duration_min"                data-endpoint="GETapi-tours"
+               value="3"
+               data-component="query">
+    <br>
+<p>Filter by minimum duration (days). Example: <code>3</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>duration_max</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="duration_max"                data-endpoint="GETapi-tours"
+               value="10"
+               data-component="query">
+    <br>
+<p>Filter by maximum duration (days). Example: <code>10</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-tours"
+               value="beach"
+               data-component="query">
+    <br>
+<p>Search in tour name and description. Example: <code>beach</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>sort_by</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="sort_by"                data-endpoint="GETapi-tours"
+               value="base_price_adult"
+               data-component="query">
+    <br>
+<p>Sort by field (name/base_price_adult/duration/created_at). Example: <code>base_price_adult</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>sort_order</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="sort_order"                data-endpoint="GETapi-tours"
+               value="asc"
+               data-component="query">
+    <br>
+<p>Sort order (asc/desc). Example: <code>asc</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-tours"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-tours"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number. Example: <code>1</code></p>
+            </div>
+                </form>
+
+                    <h2 id="tour-management-GETapi-tours--id-">Get a specific tour</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-tours--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/tours/uuid-here" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/tours/uuid-here"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-tours--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: {
+        &quot;id&quot;: &quot;uuid-here&quot;,
+        &quot;name&quot;: &quot;Cox&#039;s Bazar Beach Tour&quot;,
+        &quot;slug&quot;: &quot;coxs-bazar-beach-tour&quot;,
+        &quot;description&quot;: &quot;Complete beach tour package with accommodation&quot;,
+        &quot;base_price_adult&quot;: 15000,
+        &quot;base_price_child&quot;: 12000,
+        &quot;duration_days&quot;: 3,
+        &quot;duration_nights&quot;: 2,
+        &quot;max_booking_per_day&quot;: 20,
+        &quot;tour_type&quot;: &quot;domestic&quot;,
+        &quot;status&quot;: &quot;active&quot;,
+        &quot;is_featured&quot;: true,
+        &quot;category&quot;: {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;Beach Tours&quot;,
+            &quot;description&quot;: &quot;Beach and coastal tours&quot;
+        },
+        &quot;from_state&quot;: {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;Dhaka&quot;
+        },
+        &quot;to_state&quot;: {
+            &quot;id&quot;: 2,
+            &quot;name&quot;: &quot;Chittagong&quot;
+        },
+        &quot;itineraries&quot;: [
+            {
+                &quot;day&quot;: 1,
+                &quot;title&quot;: &quot;Arrival&quot;,
+                &quot;description&quot;: &quot;Check-in and beach walk&quot;
+            }
+        ],
+        &quot;galleries&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;image_url&quot;: &quot;https://example.com/image1.jpg&quot;,
+                &quot;alt_text&quot;: &quot;Beach view&quot;
+            }
+        ],
+        &quot;faqs&quot;: [
+            {
+                &quot;question&quot;: &quot;What&#039;s included?&quot;,
+                &quot;answer&quot;: &quot;All meals and accommodation&quot;
+            }
+        ],
+        &quot;tour_route&quot;: &quot;Dhaka &rarr; Chittagong&quot;,
+        &quot;bookings_count&quot;: 25,
+        &quot;created_at&quot;: &quot;2023-04-29T10:00:00.000000Z&quot;
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-tours--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-tours--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-tours--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-tours--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-tours--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-tours--id-" data-method="GET"
+      data-path="api/tours/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-tours--id-"
+                    onclick="tryItOut('GETapi-tours--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-tours--id-"
+                    onclick="cancelTryOut('GETapi-tours--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-tours--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/tours/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-tours--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-tours--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="GETapi-tours--id-"
+               value="uuid-here"
+               data-component="url">
+    <br>
+<p>The ID of the tour. Example: <code>uuid-here</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="tour-management-GETapi-tours-featured-list">Get featured tours</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-tours-featured-list">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/tours/featured/list?limit=6&amp;status=active" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/tours/featured/list"
+);
+
+const params = {
+    "limit": "6",
+    "status": "active",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-tours-featured-list">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: &quot;uuid-here&quot;,
+            &quot;name&quot;: &quot;Cox&#039;s Bazar Beach Tour&quot;,
+            &quot;slug&quot;: &quot;coxs-bazar-beach-tour&quot;,
+            &quot;base_price_adult&quot;: 15000,
+            &quot;base_price_child&quot;: 12000,
+            &quot;duration_days&quot;: 3,
+            &quot;tour_type&quot;: &quot;domestic&quot;,
+            &quot;status&quot;: &quot;active&quot;,
+            &quot;is_featured&quot;: true,
+            &quot;category&quot;: {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;Beach Tours&quot;
+            },
+            &quot;to_state&quot;: {
+                &quot;id&quot;: 2,
+                &quot;name&quot;: &quot;Chittagong&quot;
+            },
+            &quot;tour_route&quot;: &quot;Dhaka &rarr; Chittagong&quot;,
+            &quot;bookings_count&quot;: 25
+        }
+    ]
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-tours-featured-list" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-tours-featured-list"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-tours-featured-list"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-tours-featured-list" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-tours-featured-list">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-tours-featured-list" data-method="GET"
+      data-path="api/tours/featured/list"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours-featured-list', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-tours-featured-list"
+                    onclick="tryItOut('GETapi-tours-featured-list');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-tours-featured-list"
+                    onclick="cancelTryOut('GETapi-tours-featured-list');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-tours-featured-list"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/tours/featured/list</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-tours-featured-list"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-tours-featured-list"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>limit</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="limit"                data-endpoint="GETapi-tours-featured-list"
+               value="6"
+               data-component="query">
+    <br>
+<p>Number of tours to return (max 20). Example: <code>6</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-tours-featured-list"
+               value="active"
+               data-component="query">
+    <br>
+<p>Filter by status (active/inactive). Example: <code>active</code></p>
+            </div>
+                </form>
+
+                    <h2 id="tour-management-GETapi-tours-popular-list">Get popular tours (admin marked + most booked)</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-tours-popular-list">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/tours/popular/list?limit=8&amp;status=active" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/tours/popular/list"
+);
+
+const params = {
+    "limit": "8",
+    "status": "active",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-tours-popular-list">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: &quot;uuid-here&quot;,
+            &quot;name&quot;: &quot;Cox&#039;s Bazar Beach Tour&quot;,
+            &quot;slug&quot;: &quot;coxs-bazar-beach-tour&quot;,
+            &quot;base_price_adult&quot;: 15000,
+            &quot;base_price_child&quot;: 12000,
+            &quot;duration_days&quot;: 3,
+            &quot;tour_type&quot;: &quot;domestic&quot;,
+            &quot;status&quot;: &quot;active&quot;,
+            &quot;is_popular&quot;: true,
+            &quot;category&quot;: {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;Beach Tours&quot;
+            },
+            &quot;to_state&quot;: {
+                &quot;id&quot;: 2,
+                &quot;name&quot;: &quot;Chittagong&quot;
+            },
+            &quot;tour_route&quot;: &quot;Dhaka &rarr; Chittagong&quot;,
+            &quot;bookings_count&quot;: 150
+        }
+    ]
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-tours-popular-list" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-tours-popular-list"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-tours-popular-list"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-tours-popular-list" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-tours-popular-list">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-tours-popular-list" data-method="GET"
+      data-path="api/tours/popular/list"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours-popular-list', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-tours-popular-list"
+                    onclick="tryItOut('GETapi-tours-popular-list');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-tours-popular-list"
+                    onclick="cancelTryOut('GETapi-tours-popular-list');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-tours-popular-list"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/tours/popular/list</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-tours-popular-list"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-tours-popular-list"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>limit</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="limit"                data-endpoint="GETapi-tours-popular-list"
+               value="8"
+               data-component="query">
+    <br>
+<p>Number of tours to return (max 20). Example: <code>8</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-tours-popular-list"
+               value="active"
+               data-component="query">
+    <br>
+<p>Filter by status (active/inactive). Example: <code>active</code></p>
+            </div>
+                </form>
+
+                    <h2 id="tour-management-GETapi-tours-search-query">Search tours</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-tours-search-query">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/tours/search/query?q=beach+tour&amp;status=active&amp;category_id=1&amp;tour_type=domestic&amp;per_page=10" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"q\": \"vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/tours/search/query"
+);
+
+const params = {
+    "q": "beach tour",
+    "status": "active",
+    "category_id": "1",
+    "tour_type": "domestic",
+    "per_page": "10",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "q": "vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur"
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-tours-search-query">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: &quot;uuid-here&quot;,
+            &quot;name&quot;: &quot;Cox&#039;s Bazar Beach Tour&quot;,
+            &quot;description&quot;: &quot;Beautiful beach experience...&quot;,
+            &quot;base_price_adult&quot;: 15000,
+            &quot;duration_days&quot;: 3,
+            &quot;tour_type&quot;: &quot;domestic&quot;,
+            &quot;status&quot;: &quot;active&quot;,
+            &quot;category&quot;: {
+                &quot;name&quot;: &quot;Beach Tours&quot;
+            },
+            &quot;tour_route&quot;: &quot;Dhaka &rarr; Chittagong&quot;,
+            &quot;bookings_count&quot;: 25
+        }
+    ],
+    &quot;meta&quot;: {
+        &quot;query&quot;: &quot;beach tour&quot;,
+        &quot;total_found&quot;: 5
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-tours-search-query" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-tours-search-query"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-tours-search-query"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-tours-search-query" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-tours-search-query">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-tours-search-query" data-method="GET"
+      data-path="api/tours/search/query"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours-search-query', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-tours-search-query"
+                    onclick="tryItOut('GETapi-tours-search-query');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-tours-search-query"
+                    onclick="cancelTryOut('GETapi-tours-search-query');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-tours-search-query"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/tours/search/query</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-tours-search-query"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-tours-search-query"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>q</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="q"                data-endpoint="GETapi-tours-search-query"
+               value="beach tour"
+               data-component="query">
+    <br>
+<p>Search query. Example: <code>beach tour</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-tours-search-query"
+               value="active"
+               data-component="query">
+    <br>
+<p>Filter by status (active/inactive). Example: <code>active</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-tours-search-query"
+               value="1"
+               data-component="query">
+    <br>
+<p>Filter by category. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>tour_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="tour_type"                data-endpoint="GETapi-tours-search-query"
+               value="domestic"
+               data-component="query">
+    <br>
+<p>Filter by tour type. Example: <code>domestic</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-tours-search-query"
+               value="10"
+               data-component="query">
+    <br>
+<p>Items per page (max 50). Example: <code>10</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>q</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="q"                data-endpoint="GETapi-tours-search-query"
+               value="vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur"
+               data-component="body">
+    <br>
+<p>Must be at least 2 characters. Example: <code>vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur</code></p>
+        </div>
+        </form>
+
+                    <h2 id="tour-management-GETapi-tours-category--category_id-">Get tours by category</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-tours-category--category_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://127.0.0.1:8000/api/tours/category/1?status=active&amp;per_page=12" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://127.0.0.1:8000/api/tours/category/1"
+);
+
+const params = {
+    "status": "active",
+    "per_page": "12",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-tours-category--category_id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: &quot;uuid-here&quot;,
+            &quot;name&quot;: &quot;Cox&#039;s Bazar Beach Tour&quot;,
+            &quot;base_price_adult&quot;: 15000,
+            &quot;duration_days&quot;: 3,
+            &quot;tour_type&quot;: &quot;domestic&quot;,
+            &quot;status&quot;: &quot;active&quot;,
+            &quot;tour_route&quot;: &quot;Dhaka &rarr; Chittagong&quot;,
+            &quot;bookings_count&quot;: 25
+        }
+    ],
+    &quot;meta&quot;: {
+        &quot;current_page&quot;: 1,
+        &quot;last_page&quot;: 2,
+        &quot;per_page&quot;: 12,
+        &quot;total&quot;: 20
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-tours-category--category_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-tours-category--category_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-tours-category--category_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-tours-category--category_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-tours-category--category_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-tours-category--category_id-" data-method="GET"
+      data-path="api/tours/category/{category_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours-category--category_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-tours-category--category_id-"
+                    onclick="tryItOut('GETapi-tours-category--category_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-tours-category--category_id-"
+                    onclick="cancelTryOut('GETapi-tours-category--category_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-tours-category--category_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/tours/category/{category_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-tours-category--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-tours-category--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-tours-category--category_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the category. Example: <code>1</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-tours-category--category_id-"
+               value="active"
+               data-component="query">
+    <br>
+<p>Filter by status (active/inactive). Example: <code>active</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-tours-category--category_id-"
+               value="12"
+               data-component="query">
+    <br>
+<p>Items per page (max 50). Example: <code>12</code></p>
             </div>
                 </form>
 

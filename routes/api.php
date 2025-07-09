@@ -121,6 +121,55 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     ]);
 })->middleware(['signed'])->name('verification.verify');
 
+// Tour Categories (Public)
+Route::get('/tour-categories', [App\Http\Controllers\Api\TourController::class, 'categories']);
+
+// Tours (Public)
+Route::prefix('tours')->group(function () {
+    // Get all tours with filtering and pagination
+    Route::get('/', [App\Http\Controllers\Api\TourController::class, 'index']);
+    
+    // Get a specific tour
+    Route::get('/{id}', [App\Http\Controllers\Api\TourController::class, 'show']);
+    
+    // Get featured tours
+    Route::get('/featured/list', [App\Http\Controllers\Api\TourController::class, 'featured']);
+    
+    // Get popular tours
+    Route::get('/popular/list', [App\Http\Controllers\Api\TourController::class, 'popular']);
+    
+    // Search tours
+    Route::get('/search/query', [App\Http\Controllers\Api\TourController::class, 'search']);
+    
+    // Get tours by category
+    Route::get('/category/{category_id}', [App\Http\Controllers\Api\TourController::class, 'toursByCategory']);
+});
+
+/**
+ * Get top 8 destinations (Public)
+ *
+ * @queryParam status string Filter by status (active/inactive). Default: active. Example: active
+ *
+ * @response {
+ *   "data": [
+ *     {
+ *       "id": 1,
+ *       "name": "Cox's Bazar",
+ *       "slug": "coxs-bazar",
+ *       "description": "World's longest sea beach",
+ *       "short_description": "Beautiful beach destination",
+ *       "featured_image": "https://example.com/coxs-bazar.jpg",
+ *       "status": "active",
+ *       "tours_count": 15,
+ *       "average_price": 12500,
+ *       "created_at": "2023-04-29T10:00:00.000000Z"
+ *     }
+ *   ]
+ * }
+ */
+Route::get('/destinations/top', [LocationController::class, 'topDestinations']);
+
+
 
 /**
  * @group Protected Endpoints

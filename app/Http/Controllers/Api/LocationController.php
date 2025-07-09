@@ -884,4 +884,89 @@ class LocationController extends Controller
 
         return response()->json(['data' => $query->get()]);
     }
+
+ /**
+     * Get top 8 destinations
+     *
+     * @queryParam status string Filter by status (active/inactive). Example: active
+     *
+     * @response {
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "name": "Cox's Bazar",
+     *       "slug": "coxs-bazar",
+     *       "description": "World's longest sea beach",
+     *       "short_description": "Beautiful beach destination",
+     *       "image": "https://example.com/coxs-bazar.jpg",
+     *       "status": "active",
+     *       "tours_count": 15,
+     *       "average_price": 12500,
+     *       "created_at": "2023-04-29T10:00:00.000000Z"
+     *     }
+     *   ]
+     * }
+     */
+    public function topDestinations(Request $request)
+    {
+        $statusFilter = $request->get('status', 'active');
+        $destinations = collect();
+    
+        // Step 1: Get states marked as top destinations by admin
+        $topDestinations = State::where('is_top_destination', true)
+            ->where('status', $statusFilter)
+            ->withCount(['tourPackagesFrom as tour_packages_count'])
+            ->get();
+    
+        $destinations = $destinations->merge($topDestinations);
+    
+        // Step 2: If we don't have 8 destinations, get states with most tour packages
+        if ($destinations->count() < 8) {
+            $needed = 8 - $destinations->count();
+            $excludeIds = $destinations->pluck('id')->toArray();
+    
+            $popularDestinations = State::where('status', $statusFilter)
+                ->whereNotIn('id', $excludeIds)
+                ->withCount(['tourPackagesFrom as tour_packages_count'])
+                ->having('tour_packages_count', '>', 0)
+                ->orderBy('tour_packages_count', 'desc')
+                ->limit($needed)
+                ->get();
+    
+            $destinations = $destinations->merge($popularDestinations);
+        }
+    
+        // Step 3: If still not 8, add random states
+        if ($destinations->count() < 8) {
+            $needed = 8 - $destinations->count();
+            $excludeIds = $destinations->pluck('id')->toArray();
+    
+            $randomDestinations = State::where('status', $statusFilter)
+                ->whereNotIn('id', $excludeIds)
+                ->withCount(['tourPackagesFrom as tour_packages_count'])
+                ->inRandomOrder()
+                ->limit($needed)
+                ->get();
+    
+            $destinations = $destinations->merge($randomDestinations);
+        }
+    
+        // Add calculated fields for each destination
+        $destinations->each(function ($destination) {
+            // Calculate average price from tour packages
+            $tourPackages = \App\Models\TourPackage::where('from_state_id', $destination->id)
+                ->where('status', 'active');
+            
+            $destination->average_price = $tourPackages->avg('base_price_adult') ?? 0;
+            $destination->tours_count = $tourPackages->count();
+    
+            // Add featured image URL using the direct image field
+            $destination->featured_image = $destination->image ? asset('storage/' . $destination->image) : null;
+            
+            // Add short description from description field
+            $destination->short_description = $destination->getDescriptionExcerpt(100);
+        });
+    
+        return response()->json(['data' => $destinations->take(8)->values()]);
+    }
 }

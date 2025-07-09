@@ -1,7 +1,5 @@
 <?php
 
-// filepath: app/Models/TourPackage.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +44,14 @@ class TourPackage extends Model
         'status',
     ];
 
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'is_popular' => 'boolean',
+        'base_price_adult' => 'decimal:2',
+        'base_price_child' => 'decimal:2',
+        'agent_commission_percent' => 'decimal:2',
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -81,7 +87,18 @@ class TourPackage extends Model
         return $this->hasMany(TourPackageBookingLimit::class, 'tour_package_id');
     }
 
-    // === NEW LOCATION RELATIONSHIPS ===
+    // === BOOKING RELATIONSHIPS ===
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'tour_package_id');
+    }
+
+    public function tourBookingDetails()
+    {
+        return $this->hasMany(TourBookingDetail::class, 'tour_package_id');
+    }
+
+    // === LOCATION RELATIONSHIPS ===
     // FROM Location relationships
     public function fromCountry()
     {
@@ -124,55 +141,72 @@ class TourPackage extends Model
         return $this->belongsTo(Upazilla::class, 'to_upazilla_id');
     }
 
-    // === LOCATION METHODS ===
+    // === HELPER METHODS ===
     public function getFromLocationName()
     {
-        $parts = [];
         if ($this->fromUpazilla) {
-            $parts[] = $this->fromUpazilla->name;
+            return $this->fromUpazilla->name;
         }
-        if ($this->fromZella && $this->fromZella->name !== $this->fromUpazilla?->name) {
-            $parts[] = $this->fromZella->name;
+        if ($this->fromZella) {
+            return $this->fromZella->name;
         }
         if ($this->fromState) {
-            $parts[] = $this->fromState->name;
+            return $this->fromState->name;
         }
         if ($this->fromCountry) {
-            $parts[] = $this->fromCountry->name;
+            return $this->fromCountry->name;
         }
-
-        return !empty($parts) ? implode(', ', $parts) : 'Location not specified';
+        return $this->from_location_details ?? 'Not specified';
     }
 
     public function getToLocationName()
     {
-        $parts = [];
         if ($this->toUpazilla) {
-            $parts[] = $this->toUpazilla->name;
+            return $this->toUpazilla->name;
         }
-        if ($this->toZella && $this->toZella->name !== $this->toUpazilla?->name) {
-            $parts[] = $this->toZella->name;
+        if ($this->toZella) {
+            return $this->toZella->name;
         }
         if ($this->toState) {
-            $parts[] = $this->toState->name;
+            return $this->toState->name;
         }
         if ($this->toCountry) {
-            $parts[] = $this->toCountry->name;
+            return $this->toCountry->name;
         }
-
-        return !empty($parts) ? implode(', ', $parts) : 'Location not specified';
+        return $this->to_location_details ?? 'Not specified';
     }
 
     public function getFullFromLocation()
     {
-        $location = $this->getFromLocationName();
-        return $this->from_location_details ? $this->from_location_details . ', ' . $location : $location;
+        $parts = [];
+        if ($this->fromUpazilla) $parts[] = $this->fromUpazilla->name;
+        if ($this->fromZella && $this->fromZella->name !== $this->fromUpazilla?->name) {
+            $parts[] = $this->fromZella->name;
+        }
+        if ($this->fromState) $parts[] = $this->fromState->name;
+        if ($this->fromCountry) $parts[] = $this->fromCountry->name;
+
+        return implode(', ', $parts) ?: ($this->from_location_details ?? 'Not specified');
     }
 
     public function getFullToLocation()
     {
-        $location = $this->getToLocationName();
-        return $this->to_location_details ? $this->to_location_details . ', ' . $location : $location;
+        $parts = [];
+        if ($this->toUpazilla) $parts[] = $this->toUpazilla->name;
+        if ($this->toZella && $this->toZella->name !== $this->toUpazilla?->name) {
+            $parts[] = $this->toZella->name;
+        }
+        if ($this->toState) $parts[] = $this->toState->name;
+        if ($this->toCountry) $parts[] = $this->toCountry->name;
+
+        return implode(', ', $parts) ?: ($this->to_location_details ?? 'Not specified');
+    }
+
+    public function getTourRoute()
+    {
+        $from = $this->getFromLocationName();
+        $to = $this->getToLocationName();
+        return "{$from} → {$to}";
     }
 
     public function getTourTypeLabel()
@@ -181,35 +215,44 @@ class TourPackage extends Model
             'domestic' => 'Domestic Tour',
             'international' => 'International Tour',
             'local' => 'Local Tour',
-            default => 'Domestic Tour'
+            default => ucfirst($this->tour_type ?? 'Tour')
         };
     }
 
-    public function getTourRoute()
+    // === ACCESSORS FOR COMPATIBILITY ===
+    public function getNameAttribute()
     {
-        $from = $this->getFromLocationName();
-        $to = $this->getToLocationName();
-
-        if ($from === 'Location not specified' && $to === 'Location not specified') {
-            return 'Route not specified';
-        }
-
-        if ($from === $to || $to === 'Location not specified') {
-            return $from;
-        }
-
-        return "{$from} → {$to}";
+        return $this->title;
     }
 
-    // === EXISTING METHODS ===
-    public function getMaxBookingForDate($date)
+    public function getDurationDaysAttribute()
     {
-        $special = $this->bookingLimits()->where('date', $date)->first();
-        return $special?->max_booking ?? $this->max_booking_per_day;
+        return $this->number_of_days;
     }
 
-    public function bookings()
+    public function getDurationNightsAttribute()
     {
-        return $this->hasMany(Booking::class, 'tour_package_id');
+        return $this->number_of_nights;
+    }
+
+    // === SCOPES ===
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopePopular($query)
+    {
+        return $query->where('is_popular', true);
+    }
+
+    public function scopeByTourType($query, $type)
+    {
+        return $query->where('tour_type', $type);
     }
 }
