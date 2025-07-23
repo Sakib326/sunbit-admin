@@ -26,7 +26,7 @@
             </style>
 
     <script>
-        var tryItOutBaseUrl = "http://127.0.0.1:8000";
+        var tryItOutBaseUrl = "https://admin.sunbittravel.com";
         var useCsrf = Boolean();
         var csrfUrl = "/sanctum/csrf-cookie";
     </script>
@@ -235,7 +235,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: July 9, 2025</li>
+        <li>Last updated: July 23, 2025</li>
     </ul>
 </div>
 
@@ -244,7 +244,7 @@
     <div class="content">
         <h1 id="introduction">Introduction</h1>
 <aside>
-    <strong>Base URL</strong>: <code>http://127.0.0.1:8000</code>
+    <strong>Base URL</strong>: <code>https://admin.sunbittravel.com</code>
 </aside>
 <pre><code>This documentation aims to provide all the information you need to work with our API.
 
@@ -271,7 +271,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/register" \
+    "https://admin.sunbittravel.com/api/register" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -286,7 +286,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/register"
+    "https://admin.sunbittravel.com/api/register"
 );
 
 const headers = {
@@ -478,7 +478,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/login" \
+    "https://admin.sunbittravel.com/api/login" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -490,7 +490,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/login"
+    "https://admin.sunbittravel.com/api/login"
 );
 
 const headers = {
@@ -656,7 +656,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/forgot-password" \
+    "https://admin.sunbittravel.com/api/forgot-password" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -667,7 +667,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/forgot-password"
+    "https://admin.sunbittravel.com/api/forgot-password"
 );
 
 const headers = {
@@ -794,7 +794,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/reset-password" \
+    "https://admin.sunbittravel.com/api/reset-password" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -808,7 +808,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/reset-password"
+    "https://admin.sunbittravel.com/api/reset-password"
 );
 
 const headers = {
@@ -981,14 +981,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/logout" \
+    "https://admin.sunbittravel.com/api/logout" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/logout"
+    "https://admin.sunbittravel.com/api/logout"
 );
 
 const headers = {
@@ -1099,14 +1099,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/me" \
+    --get "https://admin.sunbittravel.com/api/me" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/me"
+    "https://admin.sunbittravel.com/api/me"
 );
 
 const headers = {
@@ -1226,7 +1226,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/reset-password/consequatur" \
+    --get "https://admin.sunbittravel.com/api/reset-password/consequatur" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1240,7 +1240,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/reset-password/consequatur"
+    "https://admin.sunbittravel.com/api/reset-password/consequatur"
 );
 
 const headers = {
@@ -1415,14 +1415,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/email/verify/17/consequatur" \
+    --get "https://admin.sunbittravel.com/api/email/verify/17/consequatur" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/email/verify/17/consequatur"
+    "https://admin.sunbittravel.com/api/email/verify/17/consequatur"
 );
 
 const headers = {
@@ -1556,14 +1556,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/email/verification-notification" \
+    "https://admin.sunbittravel.com/api/email/verification-notification" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/email/verification-notification"
+    "https://admin.sunbittravel.com/api/email/verification-notification"
 );
 
 const headers = {
@@ -1673,14 +1673,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/admin-action" \
+    "https://admin.sunbittravel.com/api/admin-action" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/admin-action"
+    "https://admin.sunbittravel.com/api/admin-action"
 );
 
 const headers = {
@@ -1781,14 +1781,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/agent-action" \
+    "https://admin.sunbittravel.com/api/agent-action" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/agent-action"
+    "https://admin.sunbittravel.com/api/agent-action"
 );
 
 const headers = {
@@ -1893,14 +1893,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/destinations/top?status=active" \
+    --get "https://admin.sunbittravel.com/api/destinations/top?status=active" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/destinations/top"
+    "https://admin.sunbittravel.com/api/destinations/top"
 );
 
 const params = {
@@ -2041,14 +2041,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/countries?status=active&amp;trashed=1" \
+    --get "https://admin.sunbittravel.com/api/locations/countries?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/countries"
+    "https://admin.sunbittravel.com/api/locations/countries"
 );
 
 const params = {
@@ -2210,14 +2210,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/countries/1" \
+    --get "https://admin.sunbittravel.com/api/locations/countries/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/countries/1"
+    "https://admin.sunbittravel.com/api/locations/countries/1"
 );
 
 const headers = {
@@ -2349,7 +2349,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/countries" \
+    "https://admin.sunbittravel.com/api/locations/countries" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -2365,7 +2365,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/countries"
+    "https://admin.sunbittravel.com/api/locations/countries"
 );
 
 const headers = {
@@ -2563,7 +2563,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://127.0.0.1:8000/api/locations/countries/1" \
+    "https://admin.sunbittravel.com/api/locations/countries/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -2579,7 +2579,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/countries/1"
+    "https://admin.sunbittravel.com/api/locations/countries/1"
 );
 
 const headers = {
@@ -2789,14 +2789,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://127.0.0.1:8000/api/locations/countries/1" \
+    "https://admin.sunbittravel.com/api/locations/countries/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/countries/1"
+    "https://admin.sunbittravel.com/api/locations/countries/1"
 );
 
 const headers = {
@@ -2918,14 +2918,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/countries/1/restore" \
+    "https://admin.sunbittravel.com/api/locations/countries/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/countries/1/restore"
+    "https://admin.sunbittravel.com/api/locations/countries/1/restore"
 );
 
 const headers = {
@@ -3047,14 +3047,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/countries/1/states?status=active&amp;trashed=1" \
+    --get "https://admin.sunbittravel.com/api/locations/countries/1/states?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/countries/1/states"
+    "https://admin.sunbittravel.com/api/locations/countries/1/states"
 );
 
 const params = {
@@ -3227,14 +3227,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/states/1" \
+    --get "https://admin.sunbittravel.com/api/locations/states/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/states/1"
+    "https://admin.sunbittravel.com/api/locations/states/1"
 );
 
 const headers = {
@@ -3370,7 +3370,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/states" \
+    "https://admin.sunbittravel.com/api/locations/states" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -3385,7 +3385,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/states"
+    "https://admin.sunbittravel.com/api/locations/states"
 );
 
 const headers = {
@@ -3570,7 +3570,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://127.0.0.1:8000/api/locations/states/1" \
+    "https://admin.sunbittravel.com/api/locations/states/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -3585,7 +3585,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/states/1"
+    "https://admin.sunbittravel.com/api/locations/states/1"
 );
 
 const headers = {
@@ -3782,14 +3782,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://127.0.0.1:8000/api/locations/states/1" \
+    "https://admin.sunbittravel.com/api/locations/states/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/states/1"
+    "https://admin.sunbittravel.com/api/locations/states/1"
 );
 
 const headers = {
@@ -3911,14 +3911,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/states/1/restore" \
+    "https://admin.sunbittravel.com/api/locations/states/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/states/1/restore"
+    "https://admin.sunbittravel.com/api/locations/states/1/restore"
 );
 
 const headers = {
@@ -4040,14 +4040,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/states/1/zellas?status=active&amp;trashed=1" \
+    --get "https://admin.sunbittravel.com/api/locations/states/1/zellas?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/states/1/zellas"
+    "https://admin.sunbittravel.com/api/locations/states/1/zellas"
 );
 
 const params = {
@@ -4220,14 +4220,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/zellas/1" \
+    --get "https://admin.sunbittravel.com/api/locations/zellas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/zellas/1"
+    "https://admin.sunbittravel.com/api/locations/zellas/1"
 );
 
 const headers = {
@@ -4367,7 +4367,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/zellas" \
+    "https://admin.sunbittravel.com/api/locations/zellas" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -4382,7 +4382,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/zellas"
+    "https://admin.sunbittravel.com/api/locations/zellas"
 );
 
 const headers = {
@@ -4567,7 +4567,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://127.0.0.1:8000/api/locations/zellas/1" \
+    "https://admin.sunbittravel.com/api/locations/zellas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -4582,7 +4582,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/zellas/1"
+    "https://admin.sunbittravel.com/api/locations/zellas/1"
 );
 
 const headers = {
@@ -4779,14 +4779,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://127.0.0.1:8000/api/locations/zellas/1" \
+    "https://admin.sunbittravel.com/api/locations/zellas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/zellas/1"
+    "https://admin.sunbittravel.com/api/locations/zellas/1"
 );
 
 const headers = {
@@ -4908,14 +4908,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/zellas/1/restore" \
+    "https://admin.sunbittravel.com/api/locations/zellas/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/zellas/1/restore"
+    "https://admin.sunbittravel.com/api/locations/zellas/1/restore"
 );
 
 const headers = {
@@ -5037,14 +5037,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/zellas/1/upazillas?status=active&amp;trashed=1" \
+    --get "https://admin.sunbittravel.com/api/locations/zellas/1/upazillas?status=active&amp;trashed=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/zellas/1/upazillas"
+    "https://admin.sunbittravel.com/api/locations/zellas/1/upazillas"
 );
 
 const params = {
@@ -5218,14 +5218,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/upazillas/1" \
+    --get "https://admin.sunbittravel.com/api/locations/upazillas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/upazillas/1"
+    "https://admin.sunbittravel.com/api/locations/upazillas/1"
 );
 
 const headers = {
@@ -5367,7 +5367,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/upazillas" \
+    "https://admin.sunbittravel.com/api/locations/upazillas" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -5383,7 +5383,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/upazillas"
+    "https://admin.sunbittravel.com/api/locations/upazillas"
 );
 
 const headers = {
@@ -5581,7 +5581,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://127.0.0.1:8000/api/locations/upazillas/1" \
+    "https://admin.sunbittravel.com/api/locations/upazillas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -5597,7 +5597,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/upazillas/1"
+    "https://admin.sunbittravel.com/api/locations/upazillas/1"
 );
 
 const headers = {
@@ -5807,14 +5807,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://127.0.0.1:8000/api/locations/upazillas/1" \
+    "https://admin.sunbittravel.com/api/locations/upazillas/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/upazillas/1"
+    "https://admin.sunbittravel.com/api/locations/upazillas/1"
 );
 
 const headers = {
@@ -5936,14 +5936,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://127.0.0.1:8000/api/locations/upazillas/1/restore" \
+    "https://admin.sunbittravel.com/api/locations/upazillas/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/upazillas/1/restore"
+    "https://admin.sunbittravel.com/api/locations/upazillas/1/restore"
 );
 
 const headers = {
@@ -6065,14 +6065,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/locations/hierarchy?status=active" \
+    --get "https://admin.sunbittravel.com/api/locations/hierarchy?status=active" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/locations/hierarchy"
+    "https://admin.sunbittravel.com/api/locations/hierarchy"
 );
 
 const params = {
@@ -6240,14 +6240,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/tour-categories?status=active" \
+    --get "https://admin.sunbittravel.com/api/tour-categories?status=active" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/tour-categories"
+    "https://admin.sunbittravel.com/api/tour-categories"
 );
 
 const params = {
@@ -6384,14 +6384,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/tours?status=active&amp;category_id=1&amp;tour_type=domestic&amp;from_state_id=1&amp;to_state_id=2&amp;min_price=1000&amp;max_price=5000&amp;duration_min=3&amp;duration_max=10&amp;search=beach&amp;sort_by=base_price_adult&amp;sort_order=asc&amp;per_page=15&amp;page=1" \
+    --get "https://admin.sunbittravel.com/api/tours?status=active&amp;category_id=1&amp;tour_type=domestic&amp;from_state_id=1&amp;to_state_id=2&amp;min_price=1000&amp;max_price=5000&amp;duration_min=3&amp;duration_max=10&amp;search=beach&amp;sort_by=base_price_adult&amp;sort_order=asc&amp;per_page=15&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/tours"
+    "https://admin.sunbittravel.com/api/tours"
 );
 
 const params = {
@@ -6713,14 +6713,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/tours/uuid-here" \
+    --get "https://admin.sunbittravel.com/api/tours/uuid-here" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/tours/uuid-here"
+    "https://admin.sunbittravel.com/api/tours/uuid-here"
 );
 
 const headers = {
@@ -6891,14 +6891,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/tours/featured/list?limit=6&amp;status=active" \
+    --get "https://admin.sunbittravel.com/api/tours/featured/list?limit=6&amp;status=active" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/tours/featured/list"
+    "https://admin.sunbittravel.com/api/tours/featured/list"
 );
 
 const params = {
@@ -7060,14 +7060,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/tours/popular/list?limit=8&amp;status=active" \
+    --get "https://admin.sunbittravel.com/api/tours/popular/list?limit=8&amp;status=active" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/tours/popular/list"
+    "https://admin.sunbittravel.com/api/tours/popular/list"
 );
 
 const params = {
@@ -7229,7 +7229,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/tours/search/query?q=beach+tour&amp;status=active&amp;category_id=1&amp;tour_type=domestic&amp;per_page=10" \
+    --get "https://admin.sunbittravel.com/api/tours/search/query?q=beach+tour&amp;status=active&amp;category_id=1&amp;tour_type=domestic&amp;per_page=10" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -7240,7 +7240,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/tours/search/query"
+    "https://admin.sunbittravel.com/api/tours/search/query"
 );
 
 const params = {
@@ -7452,14 +7452,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://127.0.0.1:8000/api/tours/category/1?status=active&amp;per_page=12" \
+    --get "https://admin.sunbittravel.com/api/tours/category/1?status=active&amp;per_page=12" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://127.0.0.1:8000/api/tours/category/1"
+    "https://admin.sunbittravel.com/api/tours/category/1"
 );
 
 const params = {
