@@ -241,22 +241,25 @@ class TourController extends Controller
      *     },
      *     "itineraries": [
      *       {
-     *         "day": 1,
+     *         "name": "Day 1",
      *         "title": "Arrival",
-     *         "description": "Check-in and beach walk"
+     *         "description": "Check-in and beach walk",
+     *         "position": 1
      *       }
      *     ],
      *     "galleries": [
      *       {
      *         "id": 1,
      *         "image_url": "https://example.com/image1.jpg",
-     *         "alt_text": "Beach view"
+     *         "position": 1,
+     *         "is_featured": true
      *       }
      *     ],
      *     "faqs": [
      *       {
      *         "question": "What's included?",
-     *         "answer": "All meals and accommodation"
+     *         "answer": "All meals and accommodation",
+     *         "position": 1
      *       }
      *     ],
      *     "tour_route": "Dhaka → Chittagong",
@@ -265,133 +268,142 @@ class TourController extends Controller
      *   }
      * }
      */
-public function show($slug)
-{
-    $tour = TourPackage::with([
-        'category:id,name,meta_description',
-        'fromState:id,name',
-        'toState:id,name',
-        'fromZella:id,name',
-        'toZella:id,name',
-        'fromUpazilla:id,name',
-        'toUpazilla:id,name',
-        'fromCountry:id,name',
-        'toCountry:id,name',
-        'itineraries:id,tour_package_id,name,title,description,position',
-        'galleries:id,tour_package_id,image_url,position,is_featured',
-        'faqs:id,tour_package_id,question,answer,position'
-    ])
-    ->withCount('bookings')
-    ->where('slug', $slug)
-    ->firstOrFail();
+    public function show($slug)
+    {
+        $tour = TourPackage::with([
+            'category:id,name,meta_description',
+            'fromState:id,name',
+            'toState:id,name',
+            'fromZella:id,name',
+            'toZella:id,name',
+            'fromUpazilla:id,name',
+            'toUpazilla:id,name',
+            'fromCountry:id,name',
+            'toCountry:id,name',
+            'itineraries' => function($query) {
+                $query->select('id', 'tour_package_id', 'name', 'title', 'description', 'position')
+                    ->orderBy('position');
+            },
+            'galleries' => function($query) {
+                $query->select('id', 'tour_package_id', 'image_url', 'position', 'is_featured')
+                    ->orderBy('position');
+            },
+            'faqs' => function($query) {
+                $query->select('id', 'tour_package_id', 'question', 'answer', 'position')
+                    ->orderBy('position');
+            }
+        ])
+        ->withCount('bookings')
+        ->where('slug', $slug)
+        ->firstOrFail();
 
-    // Transform the response with ALL available fields
-    return response()->json([
-        'data' => [
-            // Basic Info
-            'id' => $tour->id,
-            'name' => $tour->title,
-            'slug' => $tour->slug,
-            'description' => $tour->description,
-            
-            // SEO Fields (MISSING)
-            'meta_title' => $tour->meta_title,
-            'meta_description' => $tour->meta_description,
-            'meta_keywords' => $tour->meta_keywords,
-            
-            // Content Fields (MISSING)
-            'highlights' => $tour->highlights,
-            'tour_schedule' => $tour->tour_schedule,
-            'whats_included' => $tour->whats_included,
-            'whats_excluded' => $tour->whats_excluded,
-            
-            // Media Fields (MISSING)
-            'area_map_url' => $tour->area_map_url,
-            'guide_pdf_url' => $tour->guide_pdf_url,
-            
-            // Pricing
-            'base_price_adult' => $tour->base_price_adult,
-            'base_price_child' => $tour->base_price_child,
-            'agent_commission_percent' => $tour->agent_commission_percent, // MISSING
-            
-            // Duration & Capacity
-            'duration_days' => $tour->number_of_days,
-            'duration_nights' => $tour->number_of_nights,
-            'max_booking_per_day' => $tour->max_booking_per_day,
-            
-            // Location Details (MISSING)
-            'from_location_details' => $tour->from_location_details,
-            'to_location_details' => $tour->to_location_details,
-            
-            // Tour Properties
-            'tour_type' => $tour->tour_type,
-            'status' => $tour->status,
-            'is_featured' => $tour->is_featured,
-            'is_popular' => $tour->is_popular,
-            
-            // Relationships
-            'category' => [
-                'id' => $tour->category->id,
-                'name' => $tour->category->name,
-                'description' => $tour->category->meta_description
-            ],
-            
-            // Complete Location Data
-            'from_location' => [
-                'country' => $tour->fromCountry,
-                'state' => $tour->fromState,
-                'zella' => $tour->fromZella,
-                'upazilla' => $tour->fromUpazilla,
-                'details' => $tour->from_location_details
-            ],
-            'to_location' => [
-                'country' => $tour->toCountry,
-                'state' => $tour->toState,
-                'zella' => $tour->toZella,
-                'upazilla' => $tour->toUpazilla,
-                'details' => $tour->to_location_details
-            ],
-            
-            // Helper Methods
-            'tour_route' => $tour->getTourRoute(),
-            'from_location_name' => $tour->getFromLocationName(),
-            'to_location_name' => $tour->getToLocationName(),
-            'tour_type_label' => $tour->getTourTypeLabel(),
-            
-            // Media Collections
-            'galleries' => $tour->galleries->sortBy('position')->map(function($gallery) {
-                return [
-                    'id' => $gallery->id,
-                    'image_url' => $gallery->image_url,
-                    'position' => $gallery->position,
-                    'is_featured' => $gallery->is_featured
-                ];
-            }),
-            
-            'itineraries' => $tour->itineraries->sortBy('position')->map(function($itinerary) {
-                return [
-                    'name' => $itinerary->name,
-                    'title' => $itinerary->title,
-                    'description' => $itinerary->description,
-                    'position' => $itinerary->position
-                ];
-            }),
-            
-            'faqs' => $tour->faqs->sortBy('position')->map(function($faq) {
-                return [
-                    'question' => $faq->question,
-                    'answer' => $faq->answer,
-                    'position' => $faq->position
-                ];
-            }),
-            
-            // Stats
-            'bookings_count' => $tour->bookings_count,
-            'created_at' => $tour->created_at,
-            'updated_at' => $tour->updated_at
-        ]
-    ]);
-}
+        // Transform the response with ALL available fields
+        return response()->json([
+            'data' => [
+                // Basic Info
+                'id' => $tour->id,
+                'name' => $tour->title,
+                'slug' => $tour->slug,
+                'description' => $tour->description,
+                
+                // SEO Fields
+                'meta_title' => $tour->meta_title,
+                'meta_description' => $tour->meta_description,
+                'meta_keywords' => $tour->meta_keywords,
+                
+                // Content Fields
+                'highlights' => $tour->highlights,
+                'tour_schedule' => $tour->tour_schedule,
+                'whats_included' => $tour->whats_included,
+                'whats_excluded' => $tour->whats_excluded,
+                
+                // Media Fields
+                'area_map_url' => $tour->area_map_url,
+                'guide_pdf_url' => $tour->guide_pdf_url,
+                
+                // Pricing
+                'base_price_adult' => $tour->base_price_adult,
+                'base_price_child' => $tour->base_price_child,
+                'agent_commission_percent' => $tour->agent_commission_percent,
+                
+                // Duration & Capacity
+                'duration_days' => $tour->number_of_days,
+                'duration_nights' => $tour->number_of_nights,
+                'max_booking_per_day' => $tour->max_booking_per_day,
+                
+                // Location Details
+                'from_location_details' => $tour->from_location_details,
+                'to_location_details' => $tour->to_location_details,
+                
+                // Tour Properties
+                'tour_type' => $tour->tour_type,
+                'status' => $tour->status,
+                'is_featured' => $tour->is_featured,
+                'is_popular' => $tour->is_popular,
+                
+                // Relationships
+                'category' => [
+                    'id' => $tour->category->id,
+                    'name' => $tour->category->name,
+                    'description' => $tour->category->meta_description
+                ],
+                
+                // Complete Location Data
+                'from_location' => [
+                    'country' => $tour->fromCountry,
+                    'state' => $tour->fromState,
+                    'zella' => $tour->fromZella,
+                    'upazilla' => $tour->fromUpazilla,
+                    'details' => $tour->from_location_details
+                ],
+                'to_location' => [
+                    'country' => $tour->toCountry,
+                    'state' => $tour->toState,
+                    'zella' => $tour->toZella,
+                    'upazilla' => $tour->toUpazilla,
+                    'details' => $tour->to_location_details
+                ],
+                
+                // Helper Methods
+                'tour_route' => $tour->getTourRoute(),
+                'from_location_name' => $tour->getFromLocationName(),
+                'to_location_name' => $tour->getToLocationName(),
+                'tour_type_label' => $tour->getTourTypeLabel(),
+                
+                // Media Collections - Fixed to return arrays
+                'galleries' => $tour->galleries->map(function($gallery) {
+                    return [
+                        'id' => $gallery->id,
+                        'image_url' => $gallery->image_url,
+                        'position' => $gallery->position,
+                        'is_featured' => $gallery->is_featured
+                    ];
+                }),
+                
+                'itineraries' => $tour->itineraries->map(function($itinerary) {
+                    return [
+                        'name' => $itinerary->name,
+                        'title' => $itinerary->title,
+                        'description' => $itinerary->description,
+                        'position' => $itinerary->position
+                    ];
+                }),
+                
+                'faqs' => $tour->faqs->map(function($faq) {
+                    return [
+                        'question' => $faq->question,
+                        'answer' => $faq->answer,
+                        'position' => $faq->position
+                    ];
+                }),
+                
+                // Stats
+                'bookings_count' => $tour->bookings_count,
+                'created_at' => $tour->created_at,
+                'updated_at' => $tour->updated_at
+            ]
+        ]);
+    }
     /**
      * Get featured tours
      *
