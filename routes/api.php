@@ -130,8 +130,7 @@ Route::prefix('tours')->group(function () {
     Route::get('/', [App\Http\Controllers\Api\TourController::class, 'index']);
     
     // Get a specific tour
-    Route::get('/{id}', [App\Http\Controllers\Api\TourController::class, 'show']);
-    
+    Route::get('/tours/{slug}', [App\Http\Controllers\Api\TourController::class, 'show']);    
     // Get featured tours
     Route::get('/featured/list', [App\Http\Controllers\Api\TourController::class, 'featured']);
     

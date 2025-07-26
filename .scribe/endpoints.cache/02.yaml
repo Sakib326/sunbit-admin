@@ -302,7 +302,7 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/tours/{id}'
+    uri: 'api/tours/tours/{slug}'
     metadata:
       groupName: 'Tour Management'
       groupDescription: |-
@@ -318,18 +318,18 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      id:
-        name: id
-        description: 'The ID of the tour.'
+      slug:
+        name: slug
+        description: 'The slug of the tour.'
         required: true
-        example: uuid-here
+        example: coxs-bazar-beach-tour
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: uuid-here
+      slug: coxs-bazar-beach-tour
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []

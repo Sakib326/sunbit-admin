@@ -209,8 +209,8 @@
                                                                                 <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours">
                                 <a href="#tour-management-GETapi-tours">Get all tours with filtering, pagination and sorting</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours--id-">
-                                <a href="#tour-management-GETapi-tours--id-">Get a specific tour</a>
+                                                                                <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours-tours--slug-">
+                                <a href="#tour-management-GETapi-tours-tours--slug-">Get a specific tour</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="tour-management-GETapi-tours-featured-list">
                                 <a href="#tour-management-GETapi-tours-featured-list">Get featured tours</a>
@@ -235,7 +235,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: July 23, 2025</li>
+        <li>Last updated: July 26, 2025</li>
     </ul>
 </div>
 
@@ -6700,27 +6700,27 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="tour-management-GETapi-tours--id-">Get a specific tour</h2>
+                    <h2 id="tour-management-GETapi-tours-tours--slug-">Get a specific tour</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-tours--id-">
+<span id="example-requests-GETapi-tours-tours--slug-">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "https://admin.sunbittravel.com/api/tours/uuid-here" \
+    --get "https://admin.sunbittravel.com/api/tours/tours/coxs-bazar-beach-tour" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "https://admin.sunbittravel.com/api/tours/uuid-here"
+    "https://admin.sunbittravel.com/api/tours/tours/coxs-bazar-beach-tour"
 );
 
 const headers = {
@@ -6735,7 +6735,7 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-GETapi-tours--id-">
+<span id="example-responses-GETapi-tours-tours--slug-">
             <blockquote>
             <p>Example response (200):</p>
         </blockquote>
@@ -6795,43 +6795,43 @@ fetch(url, {
 }</code>
  </pre>
     </span>
-<span id="execution-results-GETapi-tours--id-" hidden>
+<span id="execution-results-GETapi-tours-tours--slug-" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-GETapi-tours--id-"></span>:
+                id="execution-response-status-GETapi-tours-tours--slug-"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-tours--id-"
+    <pre class="json"><code id="execution-response-content-GETapi-tours-tours--slug-"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-GETapi-tours--id-" hidden>
+<span id="execution-error-GETapi-tours-tours--slug-" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-tours--id-">
+    <pre><code id="execution-error-message-GETapi-tours-tours--slug-">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-GETapi-tours--id-" data-method="GET"
-      data-path="api/tours/{id}"
+<form id="form-GETapi-tours-tours--slug-" data-method="GET"
+      data-path="api/tours/tours/{slug}"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours--id-', this);">
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-tours-tours--slug-', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-tours--id-"
-                    onclick="tryItOut('GETapi-tours--id-');">Try it out ⚡
+                    id="btn-tryout-GETapi-tours-tours--slug-"
+                    onclick="tryItOut('GETapi-tours-tours--slug-');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-tours--id-"
-                    onclick="cancelTryOut('GETapi-tours--id-');" hidden>Cancel 🛑
+                    id="btn-canceltryout-GETapi-tours-tours--slug-"
+                    onclick="cancelTryOut('GETapi-tours-tours--slug-');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-tours--id-"
+                    id="btn-executetryout-GETapi-tours-tours--slug-"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -6839,7 +6839,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-green">GET</small>
-            <b><code>api/tours/{id}</code></b>
+            <b><code>api/tours/tours/{slug}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -6847,7 +6847,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-tours--id-"
+                              name="Content-Type"                data-endpoint="GETapi-tours-tours--slug-"
                value="application/json"
                data-component="header">
     <br>
@@ -6858,7 +6858,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-tours--id-"
+                              name="Accept"                data-endpoint="GETapi-tours-tours--slug-"
                value="application/json"
                data-component="header">
     <br>
@@ -6866,15 +6866,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="id"                data-endpoint="GETapi-tours--id-"
-               value="uuid-here"
+                              name="slug"                data-endpoint="GETapi-tours-tours--slug-"
+               value="coxs-bazar-beach-tour"
                data-component="url">
     <br>
-<p>The ID of the tour. Example: <code>uuid-here</code></p>
+<p>The slug of the tour. Example: <code>coxs-bazar-beach-tour</code></p>
             </div>
                     </form>
 

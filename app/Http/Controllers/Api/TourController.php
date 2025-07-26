@@ -77,140 +77,140 @@ class TourController extends Controller
      * }
      */
     public function index(Request $request)
-{
-    $query = TourPackage::with([
-        'category:id,name',
-        'fromState:id,name',
-        'toState:id,name',
-        'galleries' => function($q) {
-            // Get featured gallery first, if none then get position 1, else random
-            $q->select('id', 'tour_package_id', 'image_url', 'position', 'is_featured')
-              ->where('is_featured', true)
-              ->orWhere(function($subQ) {
-                  $subQ->where('position', 1)->orWhereRaw('1=1');
-              })
-              ->orderByRaw('is_featured DESC, position ASC')
-              ->limit(1);
+        {
+            $query = TourPackage::with([
+                'category:id,name',
+                'fromState:id,name',
+                'toState:id,name',
+                'galleries' => function($q) {
+                    // Get featured gallery first, if none then get position 1, else random
+                    $q->select('id', 'tour_package_id', 'image_url', 'position', 'is_featured')
+                    ->where('is_featured', true)
+                    ->orWhere(function($subQ) {
+                        $subQ->where('position', 1)->orWhereRaw('1=1');
+                    })
+                    ->orderByRaw('is_featured DESC, position ASC')
+                    ->limit(1);
+                }
+            ])->withCount('bookings');
+
+            // Status filter
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Category filter
+            if ($request->has('category_id')) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            // Tour type filter
+            if ($request->has('tour_type')) {
+                $query->where('tour_type', $request->tour_type);
+            }
+
+            // Location filters
+            if ($request->has('from_state_id')) {
+                $query->where('from_state_id', $request->from_state_id);
+            }
+            if ($request->has('to_state_id')) {
+                $query->where('to_state_id', $request->to_state_id);
+            }
+
+            // Price range filter
+            if ($request->has('min_price')) {
+                $query->where('base_price_adult', '>=', $request->min_price);
+            }
+            if ($request->has('max_price')) {
+                $query->where('base_price_adult', '<=', $request->max_price);
+            }
+
+            // Duration filter
+            if ($request->has('duration_min')) {
+                $query->where('number_of_days', '>=', $request->duration_min);
+            }
+            if ($request->has('duration_max')) {
+                $query->where('number_of_days', '<=', $request->duration_max);
+            }
+
+            // Search filter
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+                });
+            }
+
+            // Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            
+            $allowedSortFields = ['title', 'base_price_adult', 'number_of_days', 'created_at'];
+            if (in_array($sortBy, $allowedSortFields)) {
+                $query->orderBy($sortBy, $sortOrder);
+            }
+
+            // Pagination - Select only existing fields
+            $perPage = min($request->get('per_page', 15), 100);
+            $tours = $query->select([
+                'id',
+                'title',
+                'slug', 
+                'base_price_adult',
+                'base_price_child',
+                'number_of_days',
+                'number_of_nights',
+                'tour_type',
+                'status',
+                'is_featured',
+                'is_popular',
+                'category_id',
+                'from_state_id',
+                'to_state_id',
+                'created_at'
+            ])->paginate($perPage);
+
+            // Transform response with only existing fields
+            $tours->getCollection()->transform(function ($tour) {
+                return [
+                    'id' => $tour->id,
+                    'name' => $tour->title,
+                    'slug' => $tour->slug,
+                    'base_price_adult' => $tour->base_price_adult,
+                    'base_price_child' => $tour->base_price_child,
+                    'duration_days' => $tour->number_of_days,
+                    'duration_nights' => $tour->number_of_nights,
+                    'tour_type' => $tour->tour_type,
+                    'status' => $tour->status,
+                    'is_featured' => $tour->is_featured,
+                    'is_popular' => $tour->is_popular,
+                    'category' => $tour->category,
+                    'from_state' => $tour->fromState,
+                    'to_state' => $tour->toState,
+                    'tour_route' => $tour->getTourRoute(),
+                    'featured_image' => $tour->galleries->first()?->image_url,
+                    'bookings_count' => $tour->bookings_count,
+                    'created_at' => $tour->created_at
+                ];
+            });
+
+            return response()->json([
+                'data' => $tours->items(),
+                'meta' => [
+                    'current_page' => $tours->currentPage(),
+                    'last_page' => $tours->lastPage(),
+                    'per_page' => $tours->perPage(),
+                    'total' => $tours->total()
+                ]
+            ]);
         }
-    ])->withCount('bookings');
-
-    // Status filter
-    if ($request->has('status')) {
-        $query->where('status', $request->status);
-    }
-
-    // Category filter
-    if ($request->has('category_id')) {
-        $query->where('category_id', $request->category_id);
-    }
-
-    // Tour type filter
-    if ($request->has('tour_type')) {
-        $query->where('tour_type', $request->tour_type);
-    }
-
-    // Location filters
-    if ($request->has('from_state_id')) {
-        $query->where('from_state_id', $request->from_state_id);
-    }
-    if ($request->has('to_state_id')) {
-        $query->where('to_state_id', $request->to_state_id);
-    }
-
-    // Price range filter
-    if ($request->has('min_price')) {
-        $query->where('base_price_adult', '>=', $request->min_price);
-    }
-    if ($request->has('max_price')) {
-        $query->where('base_price_adult', '<=', $request->max_price);
-    }
-
-    // Duration filter
-    if ($request->has('duration_min')) {
-        $query->where('number_of_days', '>=', $request->duration_min);
-    }
-    if ($request->has('duration_max')) {
-        $query->where('number_of_days', '<=', $request->duration_max);
-    }
-
-    // Search filter
-    if ($request->has('search')) {
-        $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%");
-        });
-    }
-
-    // Sorting
-    $sortBy = $request->get('sort_by', 'created_at');
-    $sortOrder = $request->get('sort_order', 'desc');
-    
-    $allowedSortFields = ['title', 'base_price_adult', 'number_of_days', 'created_at'];
-    if (in_array($sortBy, $allowedSortFields)) {
-        $query->orderBy($sortBy, $sortOrder);
-    }
-
-    // Pagination - Select only existing fields
-    $perPage = min($request->get('per_page', 15), 100);
-    $tours = $query->select([
-        'id',
-        'title',
-        'slug', 
-        'base_price_adult',
-        'base_price_child',
-        'number_of_days',
-        'number_of_nights',
-        'tour_type',
-        'status',
-        'is_featured',
-        'is_popular',
-        'category_id',
-        'from_state_id',
-        'to_state_id',
-        'created_at'
-    ])->paginate($perPage);
-
-    // Transform response with only existing fields
-    $tours->getCollection()->transform(function ($tour) {
-        return [
-            'id' => $tour->id,
-            'name' => $tour->title,
-            'slug' => $tour->slug,
-            'base_price_adult' => $tour->base_price_adult,
-            'base_price_child' => $tour->base_price_child,
-            'duration_days' => $tour->number_of_days,
-            'duration_nights' => $tour->number_of_nights,
-            'tour_type' => $tour->tour_type,
-            'status' => $tour->status,
-            'is_featured' => $tour->is_featured,
-            'is_popular' => $tour->is_popular,
-            'category' => $tour->category,
-            'from_state' => $tour->fromState,
-            'to_state' => $tour->toState,
-            'tour_route' => $tour->getTourRoute(),
-            'featured_image' => $tour->galleries->first()?->image_url,
-            'bookings_count' => $tour->bookings_count,
-            'created_at' => $tour->created_at
-        ];
-    });
-
-    return response()->json([
-        'data' => $tours->items(),
-        'meta' => [
-            'current_page' => $tours->currentPage(),
-            'last_page' => $tours->lastPage(),
-            'per_page' => $tours->perPage(),
-            'total' => $tours->total()
-        ]
-    ]);
-}
   
 
     /**
      * Get a specific tour
      *
-     * @urlParam id string required The ID of the tour. Example: uuid-here
+     * @urlParam slug string required The slug of the tour. Example: coxs-bazar-beach-tour
      *
      * @response {
      *   "data": {
@@ -265,30 +265,133 @@ class TourController extends Controller
      *   }
      * }
      */
-    public function show($id)
-    {
-        $tour = TourPackage::with([
-            'category:id,name,description',
-            'fromState:id,name',
-            'toState:id,name',
-            'fromZella:id,name',
-            'toZella:id,name',
-            'fromUpazilla:id,name',
-            'toUpazilla:id,name',
-            'itineraries:id,tour_package_id,day,title,description',
-            'galleries:id,tour_package_id,image_url,alt_text',
-            'faqs:id,tour_package_id,question,answer'
-        ])->withCount('bookings')->findOrFail($id);
+public function show($slug)
+{
+    $tour = TourPackage::with([
+        'category:id,name,meta_description',
+        'fromState:id,name',
+        'toState:id,name',
+        'fromZella:id,name',
+        'toZella:id,name',
+        'fromUpazilla:id,name',
+        'toUpazilla:id,name',
+        'fromCountry:id,name',
+        'toCountry:id,name',
+        'itineraries:id,tour_package_id,name,title,description,position',
+        'galleries:id,tour_package_id,image_url,position,is_featured',
+        'faqs:id,tour_package_id,question,answer,position'
+    ])
+    ->withCount('bookings')
+    ->where('slug', $slug)
+    ->firstOrFail();
 
-        // Add calculated fields
-        $tour->tour_route = $tour->getTourRoute();
-        $tour->from_location_name = $tour->getFromLocationName();
-        $tour->to_location_name = $tour->getToLocationName();
-        $tour->tour_type_label = $tour->getTourTypeLabel();
-
-        return response()->json(['data' => $tour]);
-    }
-
+    // Transform the response with ALL available fields
+    return response()->json([
+        'data' => [
+            // Basic Info
+            'id' => $tour->id,
+            'name' => $tour->title,
+            'slug' => $tour->slug,
+            'description' => $tour->description,
+            
+            // SEO Fields (MISSING)
+            'meta_title' => $tour->meta_title,
+            'meta_description' => $tour->meta_description,
+            'meta_keywords' => $tour->meta_keywords,
+            
+            // Content Fields (MISSING)
+            'highlights' => $tour->highlights,
+            'tour_schedule' => $tour->tour_schedule,
+            'whats_included' => $tour->whats_included,
+            'whats_excluded' => $tour->whats_excluded,
+            
+            // Media Fields (MISSING)
+            'area_map_url' => $tour->area_map_url,
+            'guide_pdf_url' => $tour->guide_pdf_url,
+            
+            // Pricing
+            'base_price_adult' => $tour->base_price_adult,
+            'base_price_child' => $tour->base_price_child,
+            'agent_commission_percent' => $tour->agent_commission_percent, // MISSING
+            
+            // Duration & Capacity
+            'duration_days' => $tour->number_of_days,
+            'duration_nights' => $tour->number_of_nights,
+            'max_booking_per_day' => $tour->max_booking_per_day,
+            
+            // Location Details (MISSING)
+            'from_location_details' => $tour->from_location_details,
+            'to_location_details' => $tour->to_location_details,
+            
+            // Tour Properties
+            'tour_type' => $tour->tour_type,
+            'status' => $tour->status,
+            'is_featured' => $tour->is_featured,
+            'is_popular' => $tour->is_popular,
+            
+            // Relationships
+            'category' => [
+                'id' => $tour->category->id,
+                'name' => $tour->category->name,
+                'description' => $tour->category->meta_description
+            ],
+            
+            // Complete Location Data
+            'from_location' => [
+                'country' => $tour->fromCountry,
+                'state' => $tour->fromState,
+                'zella' => $tour->fromZella,
+                'upazilla' => $tour->fromUpazilla,
+                'details' => $tour->from_location_details
+            ],
+            'to_location' => [
+                'country' => $tour->toCountry,
+                'state' => $tour->toState,
+                'zella' => $tour->toZella,
+                'upazilla' => $tour->toUpazilla,
+                'details' => $tour->to_location_details
+            ],
+            
+            // Helper Methods
+            'tour_route' => $tour->getTourRoute(),
+            'from_location_name' => $tour->getFromLocationName(),
+            'to_location_name' => $tour->getToLocationName(),
+            'tour_type_label' => $tour->getTourTypeLabel(),
+            
+            // Media Collections
+            'galleries' => $tour->galleries->sortBy('position')->map(function($gallery) {
+                return [
+                    'id' => $gallery->id,
+                    'image_url' => $gallery->image_url,
+                    'position' => $gallery->position,
+                    'is_featured' => $gallery->is_featured
+                ];
+            }),
+            
+            'itineraries' => $tour->itineraries->sortBy('position')->map(function($itinerary) {
+                return [
+                    'name' => $itinerary->name,
+                    'title' => $itinerary->title,
+                    'description' => $itinerary->description,
+                    'position' => $itinerary->position
+                ];
+            }),
+            
+            'faqs' => $tour->faqs->sortBy('position')->map(function($faq) {
+                return [
+                    'question' => $faq->question,
+                    'answer' => $faq->answer,
+                    'position' => $faq->position
+                ];
+            }),
+            
+            // Stats
+            'bookings_count' => $tour->bookings_count,
+            'created_at' => $tour->created_at,
+            'updated_at' => $tour->updated_at
+        ]
+    ]);
+}
     /**
      * Get featured tours
      *
